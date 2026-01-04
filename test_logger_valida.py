@@ -45,16 +45,16 @@ else:
         print(f"\n Log file not Found ")
 auditor_output = {"issues": [{"type": "logic", "description": "Bug simulé", "line": 10}]}
 log_experiment("Auditor", "gemini-test-model", ActionType.ANALYSIS,
-               {"input_prompt": "Vérifier le code", "output_response": auditor_output}, "SUCCESS")
+               {"input_prompt": "check the code ", "output_response": auditor_output}, "SUCCESS")
 
 # Fixer applique la correction
 fixer_output = "def add(a, b):\n    return a + b"
 log_experiment("Fixer", "gemini-test-model", ActionType.FIX,
-               {"input_prompt": "Appliquer corrections", "output_response": fixer_output}, "SUCCESS")
+               {"input_prompt": "corrections", "output_response": fixer_output}, "SUCCESS")
 
 # Judge valide les tests
 judge_output = "Tous les tests passés"
 log_experiment("Judge", "gemini-test-model", ActionType.DEBUG,
-               {"input_prompt": "Exécuter tests", "output_response": judge_output}, "SUCCESS")
+               {"input_prompt": "Execute tests ", "output_response": judge_output}, "SUCCESS")
 
-print("✅ Mini-cycle complet simulé et loggé avec succès")                    
+print("Mini-cycle complet simulé et loggé avec succès")                    
