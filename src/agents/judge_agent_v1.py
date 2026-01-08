@@ -29,7 +29,7 @@ class JudgeAgent:
         Returns JSON with minimal, clear output.
         """
         if self.verbose:
-            print(f"⚖️  Judge evaluating (iteration {iteration})...")
+            print(f"Judge agent: (iteration {iteration})...")
         
         # Create temporary file for testing
         with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:

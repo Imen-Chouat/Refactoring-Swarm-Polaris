@@ -24,7 +24,7 @@ class AuditorAgent:
         Analyze a Python file and return structured refactoring plan.
         """
         if self.verbose:
-            print(f"🔍 Auditor analyzing: {file_path.name}")
+            print(f"Auditor agent , analyzing file : {file_path.name}")
         
         # Read file content
         try:
@@ -62,7 +62,7 @@ class AuditorAgent:
             )
             
             if self.verbose:
-                print(f"📥 Raw response length: {len(raw_response)} chars")
+                print(f"Raw response length: {len(raw_response)} chars")
             
             # Validate and parse JSON
             validated_response = self._validate_and_clean_response(
@@ -90,7 +90,7 @@ class AuditorAgent:
         except Exception as e:
             error_msg = f"Analysis failed: {str(e)}"
             if self.verbose:
-                print(f"❌ {error_msg}")
+                print(f"error: {error_msg}")
             
             # Log failure
             log_experiment(
@@ -122,7 +122,7 @@ class AuditorAgent:
         
         if self.hallucination_checks:
             if self.verbose:
-                print(f"⚠️ Hallucination checks: {self.hallucination_checks}")
+                print(f"Hallucination checks: {self.hallucination_checks}")
         
         # Step 3: Validate line numbers
         json_data = self._validate_line_numbers(json_data, original_code)
@@ -235,7 +235,7 @@ class AuditorAgent:
         
         # Ensure summary is string
         if "summary" not in data or not isinstance(data["summary"], str):
-            data["summary"] = "Code analysis completed"
+            data["summary"] = "The Analysis of code is completed"
         
         return data
     

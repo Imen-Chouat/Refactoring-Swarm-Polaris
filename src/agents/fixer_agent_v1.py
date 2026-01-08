@@ -37,8 +37,8 @@ class FixerAgent:
         Returns: (fixed_code, fix_attempts)
         """
         if self.verbose:
-            print(f"🔧 Fixer processing: {file_path.name}")
-            print(f"   Issues to fix: {len(refactoring_plan)}")
+            print(f"Fixer agent , processing the file: {file_path.name}")
+            print(f"Issues to fix: {len(refactoring_plan)}")
         
         # Read original code
         try:
@@ -60,11 +60,11 @@ class FixerAgent:
             )
             return original_code, []
         
-        # Filter and validate refactoring plan
+        # Filter and validate refactoring plan suggested by auditor 
         validated_plan = self._validate_refactoring_plan(refactoring_plan, original_code)
         
         if self.verbose and len(validated_plan) != len(refactoring_plan):
-            print(f"   ⚠️  Filtered {len(refactoring_plan) - len(validated_plan)} invalid issues")
+            print(f"Filtered {len(refactoring_plan) - len(validated_plan)} invalid issues")
         
         # Sort by priority
         priority_order = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}
@@ -125,7 +125,7 @@ class FixerAgent:
         except Exception as e:
             error_msg = f"Fixer failed: {str(e)}"
             if self.verbose:
-                print(f"❌ {error_msg}")
+                print(f"error found :{error_msg}")
             
             log_experiment(
                 agent_name="fixer",
@@ -151,28 +151,28 @@ class FixerAgent:
             # Check required fields
             if not all(key in issue for key in ["issue", "priority", "suggestion"]):
                 if self.verbose:
-                    print(f"   ⚠️  Skipping issue missing required fields")
+                    print(f"error: Skipping issue missing required fields")
                 continue
             
             # Validate line number
             line_num = issue.get("line", 0)
             if not isinstance(line_num, int) or line_num < 1 or line_num > len(lines):
                 if self.verbose:
-                    print(f"   ⚠️  Skipping issue with invalid line {line_num}")
+                    print(f"  Skipping issue for invalid line {line_num}")
                 continue
             
             # Check for blacklisted suggestions
             suggestion = issue.get("suggestion", "").lower()
             if any(blacklisted in suggestion for blacklisted in ["os.system", "eval", "exec", "__import__"]):
                 if self.verbose:
-                    print(f"   ⚠️  Skipping issue with dangerous suggestion")
+                    print(f"Skipping dangerous suggestion for some issues.")
                 continue
             
             # Verify issue exists at line
             code_snippet = issue.get("code_snippet", "").strip()
             if code_snippet and code_snippet not in lines[line_num - 1]:
                 if self.verbose:
-                    print(f"   ⚠️  Code snippet doesn't match line {line_num}")
+                    print(f"Code snippet doesn't match line {line_num}")
                 continue
             
             validated.append(issue)
