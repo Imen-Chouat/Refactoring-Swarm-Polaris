@@ -14,7 +14,7 @@ class AuditorAgent:
         )
 
  # Load the text prompt template for the auditor from a file
-        with open("src/prompts/auditor_prompt_v1.txt", encoding="utf-8") as f:
+        with open("src/prompts/auditor_prompt_v2.txt", encoding="utf-8") as f:
             self.prompt_template = f.read()
 
     def analyze_file(self, file_path: Path) -> dict:
