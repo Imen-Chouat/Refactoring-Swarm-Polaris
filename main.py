@@ -1,18 +1,12 @@
-# main.py
-import argparse
 import os
 import sys
 from pathlib import Path
-import json
 
-from src.utils.logger import log_experiment, ActionType
-from src.agents.auditor_agent_v1 import AuditorAgent
-from src.agents.fixer_agent_v1 import FixerAgent
-from src.agents.judje_agent_v1 import JudgeAgent  # Attention à l’orthographe
+from src.agents.auditor_agent import AuditorAgent
+from src.agents.fixer_agent import FixerAgent
+from src.agents.judje_agent import JudgeAgent
+from dotenv import load_dotenv
 
-
-
-MAX_ITERATIONS = 1
 
 def get_python_files(target_dir: str):
     """Récupère tous les fichiers Python dans le dossier et sous-dossiers."""
@@ -23,169 +17,64 @@ def get_python_files(target_dir: str):
                 python_files.append(os.path.join(root, f))
     return python_files
 
-def main():
-    parser = argparse.ArgumentParser(description="The Refactoring Swarm: Automatically refactor Python code")
-    parser.add_argument(
-        "--target_dir",
-        type=str,
-        required=True,
-        help="Path to the directory containing Python code"
-    )
-    args = parser.parse_args()
-    target_dir = args.target_dir
 
-    # Vérification du dossier
-    if not os.path.exists(target_dir) or not os.path.isdir(target_dir):
-        print(f"Erreur : {target_dir} n'est pas un dossier valide.")
-        log_experiment(
-            agent_name="System",
-            model_used="N/A",
-            action="ERROR",
-            details={
-                "input_prompt": "",
-                "output_response": f"Invalid target: {target_dir}"
-            },
-            status="ERROR"
-        )
+def main():
+    target_dir = "./sandbox"
+    if not os.path.exists(target_dir):
+        print(f"❌ Dossier {target_dir} introuvable")
         sys.exit(1)
 
-    print(f"DEMARRAGE SUR : {target_dir}")
-    log_experiment(
-        agent_name="System",
-        model_used="N/A",
-        action="STARTUP",
-        details={
-            "input_prompt": "",
-            "output_response": f"Target: {target_dir}"
-        },
-        status="INFO"
-    )
+    # 🔹 Charger les variables d'environnement
+    load_dotenv()
+    groq_api_key = os.environ.get("GROQ_API_KEY")
+    if not groq_api_key:
+        raise ValueError("⚠️ La variable d'environnement GROQ_API_KEY n'est pas définie")
 
-    python_files = get_python_files(target_dir)
-    if not python_files:
-        print(f"Aucun fichier Python trouvé dans {target_dir}")
-        log_experiment(
-            agent_name="System",
-            model_used="N/A",
-            action="INFO",
-            details={
-                "input_prompt": "",
-                "output_response": "No Python files found"
-            },
-            status="WARNING"
-        )
-        sys.exit(0)
-
-    # -------------------------
-    # Boucle de refactoring
-    # -------------------------
-    iteration = 0
-    tests_passed = False
-
+    # 🔹 Initialisation des agents
     auditor = AuditorAgent(verbose=True)
     fixer = FixerAgent(verbose=True)
     judge = JudgeAgent(verbose=True)
 
-    while iteration < MAX_ITERATIONS and not tests_passed:
-        print(f"\n--- Iteration {iteration + 1} ---")
-        log_experiment(
-            agent_name="System",
-            model_used="N/A",
-            action="ITERATION_START",
-            details={
-                "input_prompt": "",
-                "output_response": f"Iteration {iteration + 1}"
-            },
-            status="INFO"
-        )
+    python_files = get_python_files(target_dir)
+    if not python_files:
+        print("⚠️ Aucun fichier Python trouvé")
+        return
 
-        # -------------------------
-        # Auditor phase
-        # -------------------------
-        refactoring_plans = {}
-        for file_path in python_files:
-            plan = auditor.analyze_file(Path(file_path))
-            refactoring_plans[file_path] = plan
-            log_experiment(
-                agent_name="Auditor",
-                model_used="gemini",
-                action=ActionType.ANALYSIS,
-                details={
-                    "input_prompt": "",
-                    "output_response": json.dumps(plan)
-                },
-                status="SUCCESS"
+    for py_file in python_files:
+        print(f"\n{'='*40}")
+        print(f"Analyse de {py_file}")
+        print(f"{'='*40}")
+
+        # 1️⃣ AUDIT
+        result = auditor.analyze_file(Path(py_file))
+        refactoring_plan = result.get("refactoring_plan", [])
+
+        if not refactoring_plan:
+            print("✅ Aucun problème détecté")
+            continue
+
+        print(f"⚠️ {len(refactoring_plan)} problème(s) détecté(s):")
+        for i, issue in enumerate(refactoring_plan, 1):
+            print(
+                f"  {i}. [{issue.get('type','UNKNOWN')}] "
+                f"{issue.get('description','No description')}"
             )
 
-        # -------------------------
-        # Fixer phase
-        # -------------------------
-        for file_path, plan in refactoring_plans.items():
-            fixed_code, fixes = fixer.fix_file(Path(file_path), plan.get("refactoring_plan", []))
-            if fixed_code:
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    f.write(fixed_code)
-            log_experiment(
-                agent_name="Fixer",
-                model_used="gemini",
-                action=ActionType.FIX,
-                details={
-                    "input_prompt": "",
-                    "output_response": f"File fixed: {file_path}"
-                },
-                status="SUCCESS"
-            )
+        # 2️⃣ FIX
+        fixed_code, _ = fixer.fix_file(Path(py_file), refactoring_plan)
 
-        # -------------------------
-        # Judge phase
-        # -------------------------
-        tests_passed = True
-        for file_path in python_files:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                code = f.read()
-            result = judge.quick_evaluate(code)
-            if not result:
-                tests_passed = False
-            log_experiment(
-                agent_name="Judge",
-                model_used="gemini",
-                action=ActionType.ANALYSIS,
-                details={
-                    "input_prompt": "",
-                    "output_response": f"{file_path}: {'PASS' if result else 'FAIL'}"
-                },
-                status="SUCCESS" if result else "FAILURE"
-            )
+        if fixed_code:
+            with open(py_file, "w", encoding="utf-8") as f:
+                f.write(fixed_code)
 
-        iteration += 1
+            # 3️⃣ JUDGE (tests)
+            tests_passed = judge.quick_evaluate(fixed_code)
 
-    # -------------------------
-    # Rapport final
-    # -------------------------
-    if tests_passed:
-        print("\nRefactoring terminé avec succès ✅")
-        log_experiment(
-            agent_name="System",
-            model_used="N/A",
-            action="MISSION_COMPLETE",
-            details={
-                "input_prompt": "",
-                "output_response": f"Iterations: {iteration}"
-            },
-            status="INFO"
-        )
-    else:
-        print("\nNombre maximal d'itérations atteint — arrêt sécurisé ⚠️")
-        log_experiment(
-            agent_name="System",
-            model_used="N/A",
-            action="MISSION_INCOMPLETE",
-            details={
-                "input_prompt": "",
-                "output_response": f"Iterations: {iteration}"
-            },
-            status="WARNING"
-        )
+            if tests_passed["passed"]:
+                print("✅ Tests réussis — Mission terminée 🎉")
+            else:
+                print("❌ Tests échoués — Retour au Fixer (Self-Healing Loop)")
+
 
 if __name__ == "__main__":
     main()
