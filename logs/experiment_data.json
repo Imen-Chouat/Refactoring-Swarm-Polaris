@@ -1,11 +1,743 @@
 [
-  {
-    "id": "9e82e9b0-9b43-4a78-af43-d5d5ef848a2f",
-    "timestamp": "2025-12-26T01:26:41.177789",
-    "agent": "System",
-    "model": "unknown",
-    "action": "STARTUP",
-    "details": "Target: ./sandbox",
-    "status": "INFO"
-  }
+    {
+        "id": "9e82e9b0-9b43-4a78-af43-d5d5ef848a2f",
+        "timestamp": "2025-12-26T01:26:41.177789",
+        "agent": "System",
+        "model": "unknown",
+        "action": "STARTUP",
+        "details": "Target: ./sandbox",
+        "status": "INFO"
+    },
+    {
+        "id": "48a22498-07a7-43cc-a40b-9d9712e5f65a",
+        "timestamp": "2026-01-05T21:14:36.727214",
+        "agent": "Auditor",
+        "model": "test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "Test du logger",
+            "output_response": "Le logger fonctionne"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "40b32d24-8171-4160-9464-ce6832cfaa8d",
+        "timestamp": "2026-01-05T21:14:36.728211",
+        "agent": "Fixer",
+        "model": "test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "Test du logger pour fixer",
+            "output_response": "Le logger fonctionne pour fixer"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "13271f71-8b3c-4b8f-8012-c1f008cd5bca",
+        "timestamp": "2026-01-05T21:14:36.729292",
+        "agent": "Generator",
+        "model": "test-model",
+        "action": "CODE_GEN",
+        "details": {
+            "input_prompt": "Test du logger pour judger",
+            "output_response": "Le logger fonctionne pour judger"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "606f05f7-96db-428d-bc65-079707d0e6e7",
+        "timestamp": "2026-01-05T21:15:10.846676",
+        "agent": "Auditor ",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "Test log for auditor ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic ",
+                        "description": "Bug",
+                        "line": 42
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "1cf1c3dc-8504-4116-9504-7e1173384313",
+        "timestamp": "2026-01-05T21:15:10.848751",
+        "agent": "Fixer ",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "Test log for fixer ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "syntax ",
+                        "description": "Bug",
+                        "line": 14
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "296e8223-4f9d-481b-b156-413f41cc0b9a",
+        "timestamp": "2026-01-05T21:15:10.851112",
+        "agent": "Generator ",
+        "model": "gemini-test-model",
+        "action": "CODE_GEN",
+        "details": {
+            "input_prompt": "Test log for judge ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "style ",
+                        "description": "Bug",
+                        "line": 4
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "3ffc6984-c8de-4c49-bc9c-fcd802644091",
+        "timestamp": "2026-01-05T21:15:10.861711",
+        "agent": "Auditor",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "check the code ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic",
+                        "description": "Bug simulé",
+                        "line": 10
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "7cdf732c-fcb4-4919-b700-33721c80a065",
+        "timestamp": "2026-01-05T21:15:10.867690",
+        "agent": "Fixer",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "corrections",
+            "output_response": "def add(a, b):\n    return a + b"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "1f561b79-3492-4aea-8037-732fc98ad6cb",
+        "timestamp": "2026-01-05T21:15:10.869131",
+        "agent": "Judge",
+        "model": "gemini-test-model",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Execute tests ",
+            "output_response": "Tous les tests passés"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "9d139d64-1f10-4209-a1fb-161297ef7fe4",
+        "timestamp": "2026-01-05T21:15:50.738602",
+        "agent": "Auditor ",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "Test log for auditor ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic ",
+                        "description": "Bug",
+                        "line": 42
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "a52c32dc-e3aa-4a09-b1e2-f3b3b7ace466",
+        "timestamp": "2026-01-05T21:15:50.740596",
+        "agent": "Fixer ",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "Test log for fixer ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "syntax ",
+                        "description": "Bug",
+                        "line": 14
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "c8fb2c5e-7f11-4668-8a2e-f0d4c0bc6544",
+        "timestamp": "2026-01-05T21:15:50.742020",
+        "agent": "Generator ",
+        "model": "gemini-test-model",
+        "action": "CODE_GEN",
+        "details": {
+            "input_prompt": "Test log for judge ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "style ",
+                        "description": "Bug",
+                        "line": 4
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "ec40cad3-9421-4365-9b58-145a64bf1298",
+        "timestamp": "2026-01-05T21:15:50.748158",
+        "agent": "Auditor",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "check the code ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic",
+                        "description": "Bug simulé",
+                        "line": 10
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "24e5a133-29fb-4649-b319-23979dfa5ba0",
+        "timestamp": "2026-01-05T21:15:50.750192",
+        "agent": "Fixer",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "corrections",
+            "output_response": "def add(a, b):\n    return a + b"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "6906bbf3-977f-4237-9ca9-74e694c4a96d",
+        "timestamp": "2026-01-05T21:15:50.752510",
+        "agent": "Judge",
+        "model": "gemini-test-model",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Execute tests ",
+            "output_response": "Tous les tests passés"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "fed8a0be-50d2-47d1-9a32-4b19285d19e5",
+        "timestamp": "2026-01-05T21:16:21.302243",
+        "agent": "Auditor ",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "Test log for auditor ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic ",
+                        "description": "Bug",
+                        "line": 42
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "12c6c09e-8477-4179-b922-24354f45cf51",
+        "timestamp": "2026-01-05T21:16:21.305520",
+        "agent": "Fixer ",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "Test log for fixer ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "syntax ",
+                        "description": "Bug",
+                        "line": 14
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "ebd055ac-c22c-4efa-ae15-c117ded959a4",
+        "timestamp": "2026-01-05T21:16:21.306706",
+        "agent": "Generator ",
+        "model": "gemini-test-model",
+        "action": "CODE_GEN",
+        "details": {
+            "input_prompt": "Test log for judge ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "style ",
+                        "description": "Bug",
+                        "line": 4
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "7c3cfd2e-87d8-4878-ba35-819a582ff54c",
+        "timestamp": "2026-01-05T21:16:21.314067",
+        "agent": "Auditor",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "check the code ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic",
+                        "description": "Bug simulé",
+                        "line": 10
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "2609549a-5128-4bbe-9f7b-8445aebba884",
+        "timestamp": "2026-01-05T21:16:21.318320",
+        "agent": "Fixer",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "corrections",
+            "output_response": "def add(a, b):\n    return a + b"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "ab9550e5-f0ad-4ca6-8ed5-f652d85e3fdd",
+        "timestamp": "2026-01-05T21:16:21.321474",
+        "agent": "Judge",
+        "model": "gemini-test-model",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Execute tests ",
+            "output_response": "Tous les tests passés"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "20123773-ac31-4420-8529-52cc99bb6086",
+        "timestamp": "2026-01-05T21:18:28.387666",
+        "agent": "Auditor ",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "Test log for auditor ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic ",
+                        "description": "Bug",
+                        "line": 42
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "7ba4ba19-4b9a-4d57-9b20-3fccc9c2a759",
+        "timestamp": "2026-01-05T21:18:28.389727",
+        "agent": "Fixer ",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "Test log for fixer ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "syntax ",
+                        "description": "Bug",
+                        "line": 14
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "09eca055-5569-493e-8987-c06332007994",
+        "timestamp": "2026-01-05T21:18:28.392398",
+        "agent": "Generator ",
+        "model": "gemini-test-model",
+        "action": "CODE_GEN",
+        "details": {
+            "input_prompt": "Test log for judge ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "style ",
+                        "description": "Bug",
+                        "line": 4
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "688f7911-dfeb-4560-84e3-a5ca5f54cfcb",
+        "timestamp": "2026-01-05T21:18:28.399621",
+        "agent": "Auditor",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "check the code ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic",
+                        "description": "Bug simulé",
+                        "line": 10
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "42f896dd-0c5c-4a42-b410-8bb59afaa811",
+        "timestamp": "2026-01-05T21:18:28.404605",
+        "agent": "Fixer",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "corrections",
+            "output_response": "def add(a, b):\n    return a + b"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "ea528e46-41d2-400a-a85f-46980bcfb653",
+        "timestamp": "2026-01-05T21:18:28.407771",
+        "agent": "Judge",
+        "model": "gemini-test-model",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Execute tests ",
+            "output_response": "Tous les tests passés"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "fde9d917-2bc9-40ca-839f-805bb003abea",
+        "timestamp": "2026-01-05T21:18:33.167175",
+        "agent": "Auditor",
+        "model": "test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "Test du logger",
+            "output_response": "Le logger fonctionne"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "b2cbb32d-3b62-4f6f-a0b9-4aee478f1d36",
+        "timestamp": "2026-01-05T21:18:33.170165",
+        "agent": "Fixer",
+        "model": "test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "Test du logger pour fixer",
+            "output_response": "Le logger fonctionne pour fixer"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "2ee3857a-9d07-4d47-95d6-ccaad7e826df",
+        "timestamp": "2026-01-05T21:18:33.173266",
+        "agent": "Generator",
+        "model": "test-model",
+        "action": "CODE_GEN",
+        "details": {
+            "input_prompt": "Test du logger pour judger",
+            "output_response": "Le logger fonctionne pour judger"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "4fa8819c-a1de-4db2-a9c9-d9e70acadb04",
+        "timestamp": "2026-01-05T21:19:21.900986",
+        "agent": "Auditor ",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "Test log for auditor ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic ",
+                        "description": "Bug",
+                        "line": 42
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "f698d063-8d29-4de3-a7db-01bf68e3c752",
+        "timestamp": "2026-01-05T21:19:21.904091",
+        "agent": "Fixer ",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "Test log for fixer ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "syntax ",
+                        "description": "Bug",
+                        "line": 14
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "e4f0a4ef-f02d-459d-afa1-486ff8ee434b",
+        "timestamp": "2026-01-05T21:19:21.906084",
+        "agent": "Generator ",
+        "model": "gemini-test-model",
+        "action": "CODE_GEN",
+        "details": {
+            "input_prompt": "Test log for judge ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "style ",
+                        "description": "Bug",
+                        "line": 4
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "e9d6b044-14c5-48c2-855c-5e9c95ef74c0",
+        "timestamp": "2026-01-05T21:19:21.912455",
+        "agent": "Auditor",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "check the code ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic",
+                        "description": "Bug simulé",
+                        "line": 10
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "5fcf286e-eeba-40c9-aeda-fb0ba16a07f4",
+        "timestamp": "2026-01-05T21:19:21.916557",
+        "agent": "Fixer",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "corrections",
+            "output_response": "def add(a, b):\n    return a + b"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "9abb54f1-7002-42fc-b916-7370954b53d6",
+        "timestamp": "2026-01-05T21:19:21.919674",
+        "agent": "Judge",
+        "model": "gemini-test-model",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Execute tests ",
+            "output_response": "Tous les tests passés"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "117baf02-949f-47fe-b3d8-a08a84479f4b",
+        "timestamp": "2026-01-05T21:19:25.582437",
+        "agent": "Auditor",
+        "model": "test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "Test du logger",
+            "output_response": "Le logger fonctionne"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "23a81a34-05f3-48d4-9ad4-c127de86b3c4",
+        "timestamp": "2026-01-05T21:19:25.586440",
+        "agent": "Fixer",
+        "model": "test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "Test du logger pour fixer",
+            "output_response": "Le logger fonctionne pour fixer"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "da99fbe7-550f-4fc5-9953-49bf0340f722",
+        "timestamp": "2026-01-05T21:19:25.590033",
+        "agent": "Generator",
+        "model": "test-model",
+        "action": "CODE_GEN",
+        "details": {
+            "input_prompt": "Test du logger pour judger",
+            "output_response": "Le logger fonctionne pour judger"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "5e99bc27-5fff-49b4-b304-79af96969376",
+        "timestamp": "2026-01-05T21:20:12.706143",
+        "agent": "Auditor ",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "Test log for auditor ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic ",
+                        "description": "Bug",
+                        "line": 42
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "6b2a84d5-165b-4f5e-ae0f-633b2d788af9",
+        "timestamp": "2026-01-05T21:20:12.710284",
+        "agent": "Fixer ",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "Test log for fixer ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "syntax ",
+                        "description": "Bug",
+                        "line": 14
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "67b28e0f-dfc5-427e-a531-0ce05b408fc3",
+        "timestamp": "2026-01-05T21:20:12.712479",
+        "agent": "Generator ",
+        "model": "gemini-test-model",
+        "action": "CODE_GEN",
+        "details": {
+            "input_prompt": "Test log for judge ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "style ",
+                        "description": "Bug",
+                        "line": 4
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "bd259cec-64fc-4b31-953f-b5b3cf852d86",
+        "timestamp": "2026-01-05T21:20:12.718729",
+        "agent": "Auditor",
+        "model": "gemini-test-model",
+        "action": "CODE_ANALYSIS",
+        "details": {
+            "input_prompt": "check the code ",
+            "output_response": {
+                "issues": [
+                    {
+                        "type": "logic",
+                        "description": "Bug simulé",
+                        "line": 10
+                    }
+                ]
+            }
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "e87493af-b52d-4235-b7e2-2d6ec9a97813",
+        "timestamp": "2026-01-05T21:20:12.723912",
+        "agent": "Fixer",
+        "model": "gemini-test-model",
+        "action": "FIX",
+        "details": {
+            "input_prompt": "corrections",
+            "output_response": "def add(a, b):\n    return a + b"
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "27a44828-08d0-4486-be79-1d01ea36eb6d",
+        "timestamp": "2026-01-05T21:20:12.730199",
+        "agent": "Judge",
+        "model": "gemini-test-model",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Execute tests ",
+            "output_response": "Tous les tests passés"
+        },
+        "status": "SUCCESS"
+    }
 ]
