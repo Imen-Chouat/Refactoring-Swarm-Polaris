@@ -1,11 +1,959 @@
 [
-  {
-    "id": "9e82e9b0-9b43-4a78-af43-d5d5ef848a2f",
-    "timestamp": "2025-12-26T01:26:41.177789",
-    "agent": "System",
-    "model": "unknown",
-    "action": "STARTUP",
-    "details": "Target: ./sandbox",
-    "status": "INFO"
-  }
+    {
+        "id": "9e82e9b0-9b43-4a78-af43-d5d5ef848a2f",
+        "timestamp": "2025-12-26T01:26:41.177789",
+        "agent": "System",
+        "model": "unknown",
+        "action": "STARTUP",
+        "details": "Target: ./sandbox",
+        "status": "INFO"
+    },
+    {
+        "id": "c291d5a0-7336-4596-9ed4-41a43eb591d8",
+        "timestamp": "2026-01-05T19:10:57.056842",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_fix.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef calculate(a, b):\n    result = a + b\n    return result\n\nx = 5\ny = \"10\"\nz = x + y  # Type error\n\n\nISSUES TO FIX:\n[]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 0,
+            "priority_breakdown": {
+                "CRITICAL": 0,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 0
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "e3e3d7d4-1cd2-4441-a976-934a9d55571f",
+        "timestamp": "2026-01-05T19:11:01.073849",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "file_fixed": "test_fix.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef calculate(a, b):\n    result = a + b\n    return result\n\nx = 5\ny = \"10\"\nz = x + y  # Type error\n\n\nISSUES TO FIX:\n[]\n\nFIXED CODE:",
+            "output_response": "Fixer failed: cannot import name 'genai' from 'google' (unknown location)",
+            "error": "cannot import name 'genai' from 'google' (unknown location)"
+        },
+        "status": "ERROR"
+    },
+    {
+        "id": "f93752cb-8d9f-4c65-b23a-d0cbfba29da4",
+        "timestamp": "2026-01-05T19:11:03.718376",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 1, \"tests_failed\": 0, \"pylint_score\": 5.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 5.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 1,
+            "tests_failed": 0,
+            "pylint_score": 5.0,
+            "failure_summary": "Quality score 5.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "0895a043-3b20-4a74-8f43-0f39d265d853",
+        "timestamp": "2026-01-05T19:11:05.130442",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 5.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 5.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 5.0,
+            "failure_summary": "Quality score 5.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "cdcd6e0d-74bf-4113-9a79-f08a18462a91",
+        "timestamp": "2026-01-05T19:11:06.545732",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 5.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 5.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 5.0,
+            "failure_summary": "Quality score 5.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "0284cea6-6d2b-49bf-955f-3b385c17a709",
+        "timestamp": "2026-01-05T19:11:06.549448",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_integration.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef divide(a, b):\n    return a / b  # No zero check\n\nprint(divide(10, 0))\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"CRITICAL\",\n    \"issue\": \"No zero division check\",\n    \"line\": 2,\n    \"code_snippet\": \"return a / b\",\n    \"suggestion\": \"Add check: if b == 0: return 0\\\\nreturn a / b\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 1,
+            "priority_breakdown": {
+                "CRITICAL": 1,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 0
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "fe1c28ba-d9ce-48e3-90fe-ad70fb2e52ca",
+        "timestamp": "2026-01-05T19:11:08.690210",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "file_fixed": "test_integration.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef divide(a, b):\n    return a / b  # No zero check\n\nprint(divide(10, 0))\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"CRITICAL\",\n    \"issue\": \"No zero division check\",\n    \"line\": 2,\n    \"code_snippet\": \"return a / b\",\n    \"suggestion\": \"Add check: if b == 0: return 0\\\\nreturn a / b\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "Fixer failed: cannot import name 'genai' from 'google' (unknown location)",
+            "error": "cannot import name 'genai' from 'google' (unknown location)"
+        },
+        "status": "ERROR"
+    },
+    {
+        "id": "d0e8f4cb-5edb-4418-b93f-4a5527266c43",
+        "timestamp": "2026-01-05T19:11:10.146889",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 3, \"pylint_score\": 5.0, \"critical_issues_remaining\": 3, \"failure_summary\": \"3 tests failed: ===================================, ________________________, ERROR; Quality score 5.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 3,
+            "pylint_score": 5.0,
+            "failure_summary": "3 tests failed: ===================================, ________________________, ERROR; Quality score 5.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "afb406c5-face-41a3-9695-5c1f5ba47f14",
+        "timestamp": "2026-01-05T19:11:10.153215",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_invention.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef old_function(x):\n    return x * 2\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"LOW\",\n    \"issue\": \"Missing docstring\",\n    \"line\": 1,\n    \"suggestion\": \"Add docstring\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 1,
+            "priority_breakdown": {
+                "CRITICAL": 0,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 1
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "37d52f6b-e77a-4b54-9f7d-54498e04425d",
+        "timestamp": "2026-01-05T19:11:12.184798",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "file_fixed": "test_invention.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef old_function(x):\n    return x * 2\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"LOW\",\n    \"issue\": \"Missing docstring\",\n    \"line\": 1,\n    \"suggestion\": \"Add docstring\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "Fixer failed: cannot import name 'genai' from 'google' (unknown location)",
+            "error": "cannot import name 'genai' from 'google' (unknown location)"
+        },
+        "status": "ERROR"
+    },
+    {
+        "id": "1a50c9d0-5a2d-446a-8da1-6e54b1ae3112",
+        "timestamp": "2026-01-05T19:13:16.879085",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_fix.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef calculate(a, b):\n    result = a + b\n    return result\n\nx = 5\ny = \"10\"\nz = x + y  # Type error\n\n\nISSUES TO FIX:\n[]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 0,
+            "priority_breakdown": {
+                "CRITICAL": 0,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 0
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "94b80e54-3ab0-4195-9118-3f1cc54b179a",
+        "timestamp": "2026-01-05T19:13:17.385678",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_fix.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef calculate(a, b):\n    result = a + b\n    return result\n\nx = 5\ny = \"10\"\nz = x + y  # Type error\n\n\nISSUES TO FIX:\n[]\n\nFIXED CODE:",
+            "output_response": "def calculate_sum(a, b):\n    # This function adds two numbers\n    return result  # Fixed typo\n\nx = 5\ny = \"10\"\nz = x + int(y)  # Fixed type error",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    },
+    {
+        "id": "be66ba2c-0575-4543-9ab6-c6edf6f7e711",
+        "timestamp": "2026-01-05T19:13:18.950536",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 1, \"tests_failed\": 0, \"pylint_score\": 5.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 5.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 1,
+            "tests_failed": 0,
+            "pylint_score": 5.0,
+            "failure_summary": "Quality score 5.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "d5d9c459-46b6-4f37-b399-91b6f70742c1",
+        "timestamp": "2026-01-05T19:13:20.386567",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 5.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 5.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 5.0,
+            "failure_summary": "Quality score 5.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "914a4b28-cb1f-4966-a094-9920e3aba625",
+        "timestamp": "2026-01-05T19:13:21.886269",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 5.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 5.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 5.0,
+            "failure_summary": "Quality score 5.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "fff9cc85-baf9-439d-8fdf-a49110054d02",
+        "timestamp": "2026-01-05T19:13:21.886269",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_integration.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef divide(a, b):\n    return a / b  # No zero check\n\nprint(divide(10, 0))\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"CRITICAL\",\n    \"issue\": \"No zero division check\",\n    \"line\": 2,\n    \"code_snippet\": \"return a / b\",\n    \"suggestion\": \"Add check: if b == 0: return 0\\\\nreturn a / b\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 1,
+            "priority_breakdown": {
+                "CRITICAL": 1,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 0
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "7c8ad4de-357c-4fdd-899e-be4ab57a33ac",
+        "timestamp": "2026-01-05T19:13:22.398869",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_integration.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef divide(a, b):\n    return a / b  # No zero check\n\nprint(divide(10, 0))\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"CRITICAL\",\n    \"issue\": \"No zero division check\",\n    \"line\": 2,\n    \"code_snippet\": \"return a / b\",\n    \"suggestion\": \"Add check: if b == 0: return 0\\\\nreturn a / b\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "def old_function(x):\n    \"\"\"Returns double the input.\"\"\"\n    return x * 2",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    },
+    {
+        "id": "d9ac84d9-f563-4411-b914-e181ae2c0751",
+        "timestamp": "2026-01-05T19:13:23.988313",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 5.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 5.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 5.0,
+            "failure_summary": "Quality score 5.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "1cd9dca6-ba38-4601-b09a-ab7bcc2fe248",
+        "timestamp": "2026-01-05T19:13:24.002670",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_invention.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef old_function(x):\n    return x * 2\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"LOW\",\n    \"issue\": \"Missing docstring\",\n    \"line\": 1,\n    \"suggestion\": \"Add docstring\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 1,
+            "priority_breakdown": {
+                "CRITICAL": 0,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 1
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "e783f584-e263-4eac-91c8-589a65c66ed9",
+        "timestamp": "2026-01-05T19:13:24.508219",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_invention.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef old_function(x):\n    return x * 2\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"LOW\",\n    \"issue\": \"Missing docstring\",\n    \"line\": 1,\n    \"suggestion\": \"Add docstring\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "def old_function(x):\n    \"\"\"Returns double the input.\"\"\"\n    return x * 2",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": true,
+            "verification_issues": []
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "9821e79a-475f-4001-b5c1-e0ec7aa980d6",
+        "timestamp": "2026-01-08T21:57:40.022967",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_fix.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef calculate(a, b):\n    result = a + b\n    return result\n\nx = 5\ny = \"10\"\nz = x + y  # Type error\n\n\nISSUES TO FIX:\n[]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 0,
+            "priority_breakdown": {
+                "CRITICAL": 0,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 0
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "30a9c77f-f575-42e9-b9a9-7c8fc776cf2a",
+        "timestamp": "2026-01-08T21:57:40.026807",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_fix.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef calculate(a, b):\n    result = a + b\n    return result\n\nx = 5\ny = \"10\"\nz = x + y  # Type error\n\n\nISSUES TO FIX:\n[]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    },
+    {
+        "id": "d269fa15-0df1-4e9f-935d-08b3b34e79e7",
+        "timestamp": "2026-01-08T21:57:40.222989",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "1e497981-f8ba-4aaa-89a7-bb7e82812e0c",
+        "timestamp": "2026-01-08T21:57:40.424681",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "3f31da3f-9691-4b8e-bf7d-d3a678399713",
+        "timestamp": "2026-01-08T21:57:40.610327",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "1c73f127-f430-4bc6-a21c-3ff69c77b1f6",
+        "timestamp": "2026-01-08T21:57:40.616384",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_integration.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef divide(a, b):\n    return a / b  # No zero check\n\nprint(divide(10, 0))\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"CRITICAL\",\n    \"issue\": \"No zero division check\",\n    \"line\": 2,\n    \"code_snippet\": \"return a / b\",\n    \"suggestion\": \"Add check: if b == 0: return 0\\\\nreturn a / b\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 1,
+            "priority_breakdown": {
+                "CRITICAL": 1,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 0
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "95acacd9-981c-47ed-acbb-ddf29910244c",
+        "timestamp": "2026-01-08T21:57:40.619458",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_integration.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef divide(a, b):\n    return a / b  # No zero check\n\nprint(divide(10, 0))\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"CRITICAL\",\n    \"issue\": \"No zero division check\",\n    \"line\": 2,\n    \"code_snippet\": \"return a / b\",\n    \"suggestion\": \"Add check: if b == 0: return 0\\\\nreturn a / b\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    },
+    {
+        "id": "a3a303df-1283-4947-b8bc-0a74df747e14",
+        "timestamp": "2026-01-08T21:57:40.850540",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "dfc75fc0-eee4-43c3-86ce-45b89f79acf9",
+        "timestamp": "2026-01-08T21:57:40.856285",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_invention.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef old_function(x):\n    return x * 2\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"LOW\",\n    \"issue\": \"Missing docstring\",\n    \"line\": 1,\n    \"suggestion\": \"Add docstring\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 1,
+            "priority_breakdown": {
+                "CRITICAL": 0,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 1
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "929d06d8-f037-4c37-a14d-9db09cabd365",
+        "timestamp": "2026-01-08T21:57:40.858967",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_invention.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef old_function(x):\n    return x * 2\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"LOW\",\n    \"issue\": \"Missing docstring\",\n    \"line\": 1,\n    \"suggestion\": \"Add docstring\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    },
+    {
+        "id": "9ff715f5-df7d-43f1-890a-b9be6c1e0d92",
+        "timestamp": "2026-01-08T22:00:30.402847",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_fix.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef calculate(a, b):\n    result = a + b\n    return result\n\nx = 5\ny = \"10\"\nz = x + y  # Type error\n\n\nISSUES TO FIX:\n[]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 0,
+            "priority_breakdown": {
+                "CRITICAL": 0,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 0
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "df9cce5c-2e1c-4d88-b23a-a7814b48a333",
+        "timestamp": "2026-01-08T22:00:30.406544",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_fix.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef calculate(a, b):\n    result = a + b\n    return result\n\nx = 5\ny = \"10\"\nz = x + y  # Type error\n\n\nISSUES TO FIX:\n[]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    },
+    {
+        "id": "e6bb68ef-902f-4e6d-9a20-65c26745e458",
+        "timestamp": "2026-01-08T22:00:30.622472",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "ce5853b6-6163-4042-8bf3-c590073d4d01",
+        "timestamp": "2026-01-08T22:00:30.789847",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "3a5a229f-cc36-4842-9a95-6b7d7f8b95df",
+        "timestamp": "2026-01-08T22:00:31.003174",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "d5299906-ebb6-444a-8cd8-96e8d0f80670",
+        "timestamp": "2026-01-08T22:00:31.009265",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_integration.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef divide(a, b):\n    return a / b  # No zero check\n\nprint(divide(10, 0))\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"CRITICAL\",\n    \"issue\": \"No zero division check\",\n    \"line\": 2,\n    \"code_snippet\": \"return a / b\",\n    \"suggestion\": \"Add check: if b == 0: return 0\\\\nreturn a / b\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 1,
+            "priority_breakdown": {
+                "CRITICAL": 1,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 0
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "b935f29b-82a8-42d7-96d2-f287aae85297",
+        "timestamp": "2026-01-08T22:00:31.012921",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_integration.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef divide(a, b):\n    return a / b  # No zero check\n\nprint(divide(10, 0))\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"CRITICAL\",\n    \"issue\": \"No zero division check\",\n    \"line\": 2,\n    \"code_snippet\": \"return a / b\",\n    \"suggestion\": \"Add check: if b == 0: return 0\\\\nreturn a / b\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    },
+    {
+        "id": "9ab8a933-348e-4748-bf88-7dd542fb8a86",
+        "timestamp": "2026-01-08T22:00:31.184231",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "544e995f-c83b-45c4-90b3-3c0e2dd46373",
+        "timestamp": "2026-01-08T22:00:31.189714",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_invention.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef old_function(x):\n    return x * 2\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"LOW\",\n    \"issue\": \"Missing docstring\",\n    \"line\": 1,\n    \"suggestion\": \"Add docstring\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 1,
+            "priority_breakdown": {
+                "CRITICAL": 0,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 1
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "0a406e2e-8a50-45a4-9266-d4b0dfb57320",
+        "timestamp": "2026-01-08T22:00:31.192567",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_invention.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef old_function(x):\n    return x * 2\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"LOW\",\n    \"issue\": \"Missing docstring\",\n    \"line\": 1,\n    \"suggestion\": \"Add docstring\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    },
+    {
+        "id": "2afc8638-b08a-4c15-a9ea-0c9658ac67a1",
+        "timestamp": "2026-01-08T22:02:26.037302",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_fix.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef calculate(a, b):\n    result = a + b\n    return result\n\nx = 5\ny = \"10\"\nz = x + y  # Type error\n\n\nISSUES TO FIX:\n[]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 0,
+            "priority_breakdown": {
+                "CRITICAL": 0,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 0
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "066eb861-2651-458f-a4f8-47bc49b0c228",
+        "timestamp": "2026-01-08T22:02:26.040270",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_fix.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef calculate(a, b):\n    result = a + b\n    return result\n\nx = 5\ny = \"10\"\nz = x + y  # Type error\n\n\nISSUES TO FIX:\n[]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    },
+    {
+        "id": "ca9890e7-f744-4877-925e-a8c32344afdf",
+        "timestamp": "2026-01-08T22:02:26.230808",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "9b0b5ab4-5eaa-41fd-b6d4-ab288db72596",
+        "timestamp": "2026-01-08T22:02:26.427430",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "6e820ae5-98a2-4b53-8ef0-ca184e247e1d",
+        "timestamp": "2026-01-08T22:02:26.615168",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "5b723b3f-d5d5-48d9-a824-a04872b4f747",
+        "timestamp": "2026-01-08T22:02:26.621991",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_integration.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef divide(a, b):\n    return a / b  # No zero check\n\nprint(divide(10, 0))\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"CRITICAL\",\n    \"issue\": \"No zero division check\",\n    \"line\": 2,\n    \"code_snippet\": \"return a / b\",\n    \"suggestion\": \"Add check: if b == 0: return 0\\\\nreturn a / b\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 1,
+            "priority_breakdown": {
+                "CRITICAL": 1,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 0
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "87bad57e-8aa0-468a-aebb-27c659896998",
+        "timestamp": "2026-01-08T22:02:26.625487",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_integration.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef divide(a, b):\n    return a / b  # No zero check\n\nprint(divide(10, 0))\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"CRITICAL\",\n    \"issue\": \"No zero division check\",\n    \"line\": 2,\n    \"code_snippet\": \"return a / b\",\n    \"suggestion\": \"Add check: if b == 0: return 0\\\\nreturn a / b\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    },
+    {
+        "id": "0953d99f-b6fd-4439-b035-92fce7ade892",
+        "timestamp": "2026-01-08T22:02:26.805919",
+        "agent": "judge",
+        "model": "gemini-1.5-flash",
+        "action": "DEBUG",
+        "details": {
+            "input_prompt": "Evaluate code quality iteration 1",
+            "output_response": "{\"status\": \"FAIL\", \"tests_passed\": 0, \"tests_failed\": 0, \"pylint_score\": 3.0, \"critical_issues_remaining\": 0, \"failure_summary\": \"Quality score 3.0/10 below threshold\", \"next_action\": \"RETRY\", \"iteration\": 1}",
+            "status": "FAIL",
+            "tests_passed": 0,
+            "tests_failed": 0,
+            "pylint_score": 3.0,
+            "failure_summary": "Quality score 3.0/10 below threshold",
+            "next_action": "RETRY",
+            "iteration": 1
+        },
+        "status": "SUCCESS"
+    },
+    {
+        "id": "b72b6094-7328-48f3-be08-4e7e3e1aeb08",
+        "timestamp": "2026-01-08T22:02:26.813014",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_invention.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef old_function(x):\n    return x * 2\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"LOW\",\n    \"issue\": \"Missing docstring\",\n    \"line\": 1,\n    \"suggestion\": \"Add docstring\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_to_fix": 1,
+            "priority_breakdown": {
+                "CRITICAL": 0,
+                "HIGH": 0,
+                "MEDIUM": 0,
+                "LOW": 1
+            }
+        },
+        "status": "PENDING"
+    },
+    {
+        "id": "bc8cc873-37cf-4eda-944c-a8e21d615809",
+        "timestamp": "2026-01-08T22:02:26.816542",
+        "agent": "fixer",
+        "model": "gemini-1.5-flash",
+        "action": "FIX",
+        "details": {
+            "file_fixed": "test_invention.py",
+            "input_prompt": "Fix ONLY these issues in the code. Return fixed code only.\n\nCODE:\ndef old_function(x):\n    return x * 2\n\n\nISSUES TO FIX:\n[\n  {\n    \"priority\": \"LOW\",\n    \"issue\": \"Missing docstring\",\n    \"line\": 1,\n    \"suggestion\": \"Add docstring\"\n  }\n]\n\nFIXED CODE:",
+            "output_response": "",
+            "issues_fixed": 0,
+            "issues_skipped": 0,
+            "verification_passed": false,
+            "verification_issues": [
+                "Function signatures changed"
+            ]
+        },
+        "status": "PARTIAL"
+    }
 ]
