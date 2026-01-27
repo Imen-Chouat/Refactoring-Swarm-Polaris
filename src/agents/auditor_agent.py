@@ -37,10 +37,10 @@ PYTHON FILE:
 PYLINT OUTPUT:
 {pylint_output}
 """
-        if self.verbose:
-            print("=== PROMPT ENVOYÉ À GROQ ===")
-            print(prompt)
-            print("===============================")
+        #if self.verbose:
+            # print("=== PROMPT ENVOYÉ À GROQ ===")
+            #print(prompt)
+            #print("===============================")
 
         response = self.llm.invoke(prompt)
 
@@ -70,11 +70,11 @@ PYLINT OUTPUT:
                 "file_analyzed": str(file_path),
                 "input_prompt": prompt,
                 "output_response": response.content,
-                "issues_detected": len(issues.get("issues", []))
+                "issues_detected": len(issues.get("refactoring_plan", []))
             },
             status="SUCCESS"
         )
 
         return {
-            "refactoring_plan": issues.get("issues", [])
+            "refactoring_plan": issues.get("refactoring_plan", [])
         }

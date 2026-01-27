@@ -4,7 +4,7 @@ from pathlib import Path
 
 from src.agents.auditor_agent import AuditorAgent
 from src.agents.fixer_agent import FixerAgent
-from src.agents.judje_agent import JudgeAgent
+from src.agents.judge_agent import JudgeAgent
 from dotenv import load_dotenv
 
 
@@ -56,8 +56,8 @@ def main():
         print(f" {len(refactoring_plan)} problème(s) détecté(s):")
         for i, issue in enumerate(refactoring_plan, 1):
             print(
-                f"  {i}. [{issue.get('type','UNKNOWN')}] "
-                f"{issue.get('description','No description')}"
+                f"  {i}. [{issue.get('category','UNKNOWN')}] "
+                f"{issue.get('issue','No description')}"
             )
 
         #FIX
