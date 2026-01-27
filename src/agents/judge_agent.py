@@ -45,15 +45,17 @@ class JudgeAgent:
     def quick_evaluate(self, code: str, file_path: Path = None) -> dict:
         """
         Évalue rapidement la qualité du code avec pytest + Pylint.
+        Génère automatiquement des tests de base si aucun n'existe.
         """
         result = {
             "passed": False,
             "pylint_score": None,
             "pytest_output": "",
+            "tests_generated": False,
             "errors": []
         }
         
-        # Créer un fichier temporaire pour exécuter pytest dessus
+        # 1. Créer le fichier de code temporaire
         with tempfile.NamedTemporaryFile(
             mode='w',
             suffix='.py',
@@ -61,37 +63,50 @@ class JudgeAgent:
             encoding='utf-8'
         ) as tmp_file:
             tmp_file.write(code)
-            tmp_file_path = tmp_file.name
+            tmp_code_path = tmp_file.name
+        
+        # 2. Générer des tests automatiquement
+        test_code = self._generate_basic_tests(code, tmp_code_path)
+        
+        # 3. Créer le fichier de test temporaire
+        with tempfile.NamedTemporaryFile(
+            mode='w',
+            suffix='_test.py',
+            delete=False,
+            encoding='utf-8'
+        ) as tmp_test_file:
+            tmp_test_file.write(test_code)
+            tmp_test_path = tmp_test_file.name
         
         try:
-            # Exécuter pytest
-            test_result = run_pytest(tmp_file_path)
+            # 4. Exécuter pytest sur le fichier de test
+            test_result = run_pytest(tmp_test_path)
             result["passed"] = test_result["passed"]
             result["pytest_output"] = test_result.get("output", "")
+            result["tests_generated"] = True
             
-            # ✅ Exécuter pylint
-            pylint_result = run_pylint(tmp_file_path)
+            # 5. Exécuter pylint sur le code original
+            pylint_result = run_pylint(tmp_code_path)
             result["pylint_score"] = pylint_result.get("score")
-
+            
             if self.verbose:
                 status = "PASS" if result["passed"] else "FAIL"
                 score = result["pylint_score"]
                 score_str = f"{score:.2f}/10" if score is not None else "N/A"
-                print(f"   [Judge] {tmp_file_path}: {status}, Pylint {score_str}")
+                print(f"   [Judge] Generated tests: {status}, Pylint {score_str}")
             
-            # Déterminer si le code est acceptable
+            # 6. Vérifier les critères d'acceptation
             if not result["passed"]:
-                result["errors"].append("Tests pytest ont échoué")
+                result["errors"].append("Generated tests failed")
             
             if result["pylint_score"] is not None and result["pylint_score"] < 7.0:
                 result["errors"].append(
-                    f"Score Pylint insuffisant: {result['pylint_score']:.2f}/10 (minimum: 7.0)"
+                    f"Score Pylint insuffisant: {result['pylint_score']:.2f}/10"
                 )
                 result["passed"] = False
             
-            # Logger l'évaluation
-            status = "SUCCESS" if result["passed"] else "FAILURE"
-            self._log_evaluation(file_path or tmp_file_path, code, result, status)
+            self._log_evaluation(file_path or tmp_code_path, code, result, 
+                               "SUCCESS" if result["passed"] else "FAILURE")
             
             return result
             
@@ -113,12 +128,87 @@ class JudgeAgent:
             return result
             
         finally:
-            # Nettoyer le fichier temporaire
-            try:
-                os.remove(tmp_file_path)
-            except Exception:
-                pass
+            # Nettoyage des fichiers temporaires
+            for path in [tmp_code_path, tmp_test_path]:
+                try:
+                    os.remove(path)
+                except Exception:
+                    pass
     
+    def _generate_basic_tests(self, code: str, code_path: str) -> str:
+        """
+        Génère des tests basiques pour le code.
+        Utilise le LLM Groq pour créer des tests pertinents.
+        """
+        # Extraire le nom du module du chemin
+        module_name = Path(code_path).stem
+        
+        prompt = f"""
+ROLE: Intelligent Python Test Generator with SEMANTIC UNDERSTANDING
+TASK: Generate semantic pytest tests that validate BUSINESS LOGIC.
+
+CRITICAL INSTRUCTIONS:
+1. Understand what each function SHOULD DO based on its name and context
+2. Generate tests with EXPECTED CORRECT VALUES, not just testing if code runs
+3. Tests should FAIL if current implementation is wrong - this helps FixerAgent!
+4. Return ONLY the test code, no explanations
+
+SEMANTIC ANALYSIS:
+- "calculate_average([10, 20])" should return 15.0 (sum/len), NOT 30.0 (sum)
+- "validate_email("test@example.com")" should return True for valid emails
+- "add(2, 3)" should return 5
+- "divide(10, 2)" should return 5.0
+- "sort_list([3,1,2])" should return [1,2,3]
+
+TEST GENERATION RULES:
+1. For EACH function, determine its SEMANTIC PURPOSE from its name
+2. Generate tests with ASSERTIONS containing EXPECTED VALUES
+3. Include normal cases, edge cases, and error cases
+4. Each test must have a descriptive docstring
+5. Import using: import {module_name}
+
+EXAMPLES OF SEMANTIC ASSERTIONS:
+assert {module_name}.calculate_average([10, 20]) == 15.0  # NOT 30.0!
+assert {module_name}.add(2, 3) == 5
+assert {module_name}.divide(10, 2) == 5.0
+
+PYTHON CODE TO TEST:
+{code}
+
+MODULE NAME: {module_name}
+FILE PATH: {code_path}
+
+IMPORT INSTRUCTIONS:
+- Since test runs in same directory, use: import {module_name}
+- Or use relative import if appropriate
+- If code has main block (if __name__ == "__main__"), test the functions directly
+
+IMPORTANT: If function "calculate_average" returns sum instead of average,
+the test SHOULD FAIL with assertion error: "Expected 15.0, got 30.0"
+
+GENERATED SEMANTIC TEST CODE (Python only, no markdown):
+"""
+        
+        try:
+            response = self.llm.invoke(prompt)
+            test_code = response.content
+            
+            # Nettoyer la réponse si nécessaire
+            if "```python" in test_code:
+                test_code = test_code.split("```python")[1].split("```")[0].strip()
+            elif "```" in test_code:
+                test_code = test_code.split("```")[1].strip()
+            
+            # Vérifier que le code contient au moins une fonction test_
+            if "def test_" not in test_code:
+                raise ValueError("Generated code doesn't contain test functions")
+            
+            return test_code
+            
+        except Exception as e:
+            if self.verbose:
+                print(f"   ⚠️  LLM test generation failed: {e}, using fallback")
+
     def evaluate_file(self, file_path: Path) -> dict:
         """
         Évalue directement un fichier existant.
@@ -134,6 +224,7 @@ class JudgeAgent:
                 "passed": False,
                 "pylint_score": None,
                 "pytest_output": "",
+                "tests_generated": False,
                 "errors": [str(e)]
             }
     
@@ -149,8 +240,9 @@ class JudgeAgent:
                 "output_response": f"Passed: {result['passed']}, Score: {result['pylint_score']}",
                 "pytest_passed": result.get("passed", False),
                 "pylint_score": result.get("pylint_score"),
+                "tests_generated": result.get("tests_generated", False),
                 "errors": result.get("errors", []),
-                "pytest_output_preview": result.get("pytest_output", "")[:200]
+                "pytest_output_preview": result.get("pytest_output", "")[:500]
             },
             status=status
         )
