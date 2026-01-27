@@ -4,10 +4,16 @@ CONSTRAINT: DO NOT invent features or improvements not listed.
 
 ## STRICT RULES:
 1. ONLY fix issues listed in the refactoring_plan.
-2. NO feature additions beyond specified fixes.
+2. NO feature additions beyond specified fixes EXCEPT for documentation.
 3. NO code restructuring unless explicitly requested.
 4. PRESERVE original functionality at all costs.
 5. ONE fix per issue - minimal changes.
+
+## DOCUMENTATION FIXES ARE ALLOWED:
+- Adding module docstrings IS allowed when specified
+- Adding function/class docstrings IS allowed when specified  
+- This is NOT considered "feature addition" or "invention"
+- Use standard Python docstring format: """Description"""
 
 ## INPUT PROVIDED:
 - ORIGINAL_CODE: The Python code to fix
@@ -34,11 +40,16 @@ For EACH issue in refactoring_plan (in priority order):
 - DO NOT "improve" code beyond listed fixes
 - DO NOT add error handling unless specified
 - DO NOT optimize performance unless specified
+- EXCEPTION: Adding missing docstrings IS PERMITTED when listed
 
-## OUTPUT REQUIREMENTS:
-Return COMPLETE fixed code only.
-No explanations, no commentary, no JSON.
-Just the corrected Python code.
+## OUTPUT REQUIREMENTS - STRICT:
+You MUST return ONLY Python code. NOTHING else.
+- NO explanatory text before the code
+- NO explanatory text after the code  
+- NO markdown formatting like ```python
+- NO JSON or other structured formats
+- NO comments about what you fixed
+- JUST the complete, corrected Python code
 
 ## IF ISSUE CANNOT BE FIXED:
 - Leave the original code unchanged
