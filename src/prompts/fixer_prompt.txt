@@ -10,6 +10,16 @@ CONSTRAINT: DO NOT invent features or improvements not listed.
 5. ONE fix per issue - minimal changes.
 6. NO headings
 7. NO backticks (```)
+8. NEVER explain why something was not changed.
+9.NEVER write comments describing fixes, limitations, or tool behavior.
+10.If an issue cannot be fixed, IGNORE it completely.
+11. not comment on formatting, linters, or style checks.
+12.Silence is mandatory when no change is required.
+13. The fixed code must **replace the original code entirely**.  
+14. Do NOT duplicate or append the original code.  
+15.Return only the corrected code, exactly as it should exist in the file.
+
+
 
 ## DOCUMENTATION FIXES ARE ALLOWED:
 - Adding module docstrings IS allowed when specified
@@ -55,7 +65,6 @@ You MUST return ONLY Python code. NOTHING else.
 
 ## IF ISSUE CANNOT BE FIXED:
 - Leave the original code unchanged
-- Add comment: # FIXME: [issue description] - Could not fix
 - Continue with next issue
 
 ## VERIFICATION CHECK:
