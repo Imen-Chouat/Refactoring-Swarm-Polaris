@@ -35,37 +35,8 @@ def run_pytest(file_path: str) -> dict:
     output = process.stdout + process.stderr
     passed = process.returncode == 0  # 0 = succès dans pytest
 
-    # Essayer d'obtenir le score Pylint en parallèle
-    pylint_score = _run_pylint_score(path)
 
     return {
         "passed": passed,
         "output": output,
-        "pylint_score": pylint_score
-    }
-
-
-def _run_pylint_score(file_path: Path) -> float:
-    """
-    Exécute Pylint et extrait le score.
-    Retourne None si Pylint n'est pas disponible ou échoue.
-    """
-    try:
-        process = subprocess.run(
-            ["pylint", str(file_path)],
-            capture_output=True,
-            text=True,
-            timeout=10
-        )
-        
-        output = process.stdout + process.stderr
-        
-        # Extraire le score avec regex
-        match = re.search(r"rated at ([\d\.]+)/10", output)
-        if match:
-            return float(match.group(1))
-        
-        return None
-        
-    except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
-        return None
+                }
