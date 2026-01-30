@@ -72,35 +72,8 @@ def main():
             code_content = f.read()
         judge_result = judge.quick_evaluate(code_content, py_file)
 
-        '''
-        if judge_result.get("passed", False):
-                print("Tests réussis — Mission terminée 🎉")
-        else:
-                print("Tests échoués — Retour au Fixer (Self-Healing Loop)")
-
-        refactoring_test = judge_result.get("refactoring_test_failure")
-       
-        print(f"\n⚠️ {refactoring_test.get('issues_found', 0)} problème(s) détecté(s) par les tests:")
-        for i, issue in enumerate(refactoring_test.get("refactoring_plan", []), 1):
-         print(f"  {i}. [{issue.get('priority','UNKNOWN')}] {issue.get('issue','No description')}")
-         print(f"     Catégorie: [{issue.get('category','UNKNOWN')}]")
-         print(f"     Message: {issue.get('error_message','')[:150]}")
-         print(f"     Suggestion: {issue.get('suggestion','')}")
-
-            # Correction
-        fixed_code, _ = fixer.fix_file(Path(py_file), refactoring_test)
-        if fixed_code:
-                with open(py_file, "w", encoding="utf-8") as f:
-                    f.write(fixed_code)
-                print(f"\n✅ Code corrigé pour {py_file} :\n")
-                print(fixed_code)
-
-            # Réévaluation
-        judge_result = judge.quick_evaluate(fixed_code, py_file)
-        '''
-
         # 4️⃣ SELF-HEALING LOOP - Correction basée sur les tests
-        max_iterations = 3
+        max_iterations = 10
         iteration = 0
         print(f"\n🔄 Démarrage de la boucle de self-healing (max {max_iterations} itérations)...")
                 
