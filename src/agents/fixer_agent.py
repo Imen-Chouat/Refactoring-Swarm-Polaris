@@ -50,6 +50,9 @@ REFACTORING PLAN:
         # Appel à Groq
         response = self.llm.invoke(prompt)
         fixed_code = response.content
+        
+        # ✅ AJOUT : Nettoyage du code généré
+        fixed_code = self._clean_generated_code(fixed_code)
 
         if self.verbose:
             print(f"✅ Correction terminée pour {file_path}")
@@ -71,3 +74,47 @@ REFACTORING PLAN:
         )
 
         return fixed_code, refactoring_plan
+    
+    def _clean_generated_code(self, code: str) -> str:
+        """
+        Nettoie le code généré par le LLM.
+        Supprime les markdown, explications, et formatage indésirable.
+        """
+        # Supprimer les balises markdown ```python et ```
+        if "```python" in code:
+            code = code.split("```python")[1].split("```")[0].strip()
+        elif "```" in code:
+            code = code.split("```")[1].split("```")[0].strip()
+        
+        # Supprimer les lignes qui commencent par des explications
+        lines = code.split('\n')
+        cleaned_lines = []
+        
+        for line in lines:
+            # Ignorer les lignes vides répétées au début
+            if not cleaned_lines and not line.strip():
+                continue
+            
+            # Ignorer les explications type "Here's the fixed code:"
+            if line.strip().lower().startswith(('here', 'the fixed', 'i have', 'i\'ve')):
+                continue
+            
+            # Supprimer les commentaires FIXME répétés (bug de génération)
+            if line.strip().startswith('# FIXME:'):
+                # Ne garder que le premier FIXME par fichier
+                if cleaned_lines and any('# FIXME:' in l for l in cleaned_lines):
+                    continue
+            
+            cleaned_lines.append(line)
+        
+        # Rejoindre les lignes
+        cleaned_code = '\n'.join(cleaned_lines)
+        
+        # Supprimer les espaces en fin de ligne
+        cleaned_code = '\n'.join(line.rstrip() for line in cleaned_code.split('\n'))
+        
+        # S'assurer qu'il y a une ligne vide à la fin
+        if cleaned_code and not cleaned_code.endswith('\n'):
+            cleaned_code += '\n'
+        
+        return cleaned_code

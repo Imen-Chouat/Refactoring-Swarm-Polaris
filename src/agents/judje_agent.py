@@ -51,7 +51,9 @@ class JudgeAgent:
             "passed": False,
             "pylint_score": None,
             "pytest_output": "",
+            "pylint_output": "",
             "tests_generated": False,
+            "pytest_passed":False,
             "errors": [],
             "refactoring_test_failure": None
         }
@@ -87,7 +89,7 @@ class JudgeAgent:
         try:
             # 4. Exécuter pytest sur le fichier de test
             test_result = run_pytest(tmp_test_path)
-            result["passed"] = test_result["passed"]
+            result["pytest_passed"] = test_result["passed"]
             result["pytest_output"] = test_result.get("output", "")
             result["tests_generated"] = True
             
@@ -95,39 +97,73 @@ class JudgeAgent:
             print("\n✅ Résultat de pytest :")
             print(result["pytest_output"])
 
-            # ✅ AJOUTER CE BLOC ICI
-            # 5. Analyser les échecs de tests
-            if not result["passed"]:
-                print("\n🔍 Analyse des échecs de tests...")
-                analysis = self._analyze_test_failures(code, result["pytest_output"])
-                result["refactoring_test_failure"] = analysis
-                
-                print(f"📋 Refactoring disponible dans result['refactoring_test_failure']")
-                
-             
             # 6. Exécuter pylint sur le code original
             pylint_result = run_pylint(tmp_code_path)
             result["pylint_score"] = pylint_result.get("score")
-            print("result pylint:",pylint_result.get("score"))
+            result["pylint_output"] = pylint_result.get("output")
+            print("resultat pylint",result["pylint_output"])
+
+
+            if result["pytest_passed"] and result["pylint_score"] is not None and result["pylint_score"] >= 7.0:
+             result["passed"] = True
+            else:
+             result["passed"] = False
+
+
+            
+            print("le resultat est ",result)
+            # 5. Analyser les échecs de tests et problèmes de code
+            needs_analysis = False
+            pytest_output_to_analyze = None
+            pylint_output_to_analyze = None
+
+            # Vérifier si les tests unitaires ont échoué
+            if not result["pytest_passed"]:
+               needs_analysis = True
+               pytest_output_to_analyze = result["pytest_output"]
+
+            # Vérifier si le score Pylint est insuffisant
+            if result.get("pylint_score") is not None and result["pylint_score"] < 7.0:
+              needs_analysis = True
+              pylint_output_to_analyze = result.get("pylint_output")
+
+            if needs_analysis:
+                   if self.verbose:
+                      print("\n🔍 Analyse combinée des échecs de tests et du code...")
+                      
+                   # Appeler fonction qui combine pytest + pylint
+                   analysis = self._analyze_failures(
+                    code,
+                    pytest_output=pytest_output_to_analyze,
+                    pylint_output=pylint_output_to_analyze,
+                    pylint_score=result.get("pylint_score")
+                   )
+    
+                   result["refactoring_test_failure"] = analysis
+                   if self.verbose:
+                      print(f"📋 Refactoring disponible dans result['refactoring_test_failure']")
+                      print(result["refactoring_test_failure"])
+
+
+
             
             if self.verbose:
-                status = "PASS" if result["passed"] else "FAIL"
+                status = "YES" if result["tests_generated"] else "NO"
                 score = result["pylint_score"]
                 score_str = f"{score:.2f}/10" if score is not None else "N/A"
-                print(f"   [Judge] Generated tests: {status}, Pylint {score_str}")
+                print(f"   [Judge] Generated tests: {status}")
             
             # 7. Vérifier les critères d'acceptation
-            if not result["passed"]:
+            if not result["pytest_passed"]:
                 result["errors"].append("Generated tests failed")
             
-            if result["pylint_score"] is not None and result["pylint_score"] < 7.0:
-                result["errors"].append(
-                    f"Score Pylint insuffisant: {result['pylint_score']:.2f}/10"
-                )
-                result["passed"] = False
-            
-            self._log_evaluation(file_path or tmp_code_path, code, result, 
-                               "SUCCESS" if result["passed"] else "FAILURE")
+            # 🔹 Déterminer le status final pour le log
+            if not result.get("pytest_passed", False) or result["pylint_score"] is None or result["pylint_score"] < 7.0:
+              log_status = "FAILURE"
+            else:
+              log_status = "SUCCESS"
+
+            self._log_evaluation(file_path or tmp_code_path, code, result, status=log_status)
             
             return result
             
@@ -366,6 +402,20 @@ GENERATED SEMANTIC TEST CODE (Python only, no markdown):
             if "def test_" not in test_code:
                 raise ValueError("Generated code doesn't contain test functions")
             
+            log_experiment(
+             agent_name="JudgeAgent",
+             model_used="llama-3.3-70b-versatile",
+             action=ActionType.GENERATION,
+             details={
+                "file_analyzed": str(code_path),
+                "module_name": module_name,
+                "input_prompt": prompt,
+                "output_response": test_code,
+                "tests_detected": len([line for line in test_code.splitlines() if line.strip().startswith("def test_")])
+             },
+             status="SUCCESS"
+        )
+            
             return test_code
             
         except Exception as e:
@@ -402,8 +452,8 @@ GENERATED SEMANTIC TEST CODE (Python only, no markdown):
             details={
                 "file_evaluated": str(file_path) if file_path else "in_memory",
                 "input_prompt": f"Evaluating code ({len(code)} chars)",
-                "output_response": f"Passed: {result['passed']}, Score: {result['pylint_score']}",
-                "pytest_passed": result.get("passed", False),
+                "output_response": f"Passed: {result['pytest_passed']}, Score: {result['pylint_score']}",
+                "pytest_passed": result.get("pytest_passed", False),
                 "pylint_score": result.get("pylint_score"),
                 "tests_generated": result.get("tests_generated", False),
                 "errors": result.get("errors", []),
@@ -412,89 +462,96 @@ GENERATED SEMANTIC TEST CODE (Python only, no markdown):
             status=status
         )
 
-    
-
-
-        
-
-    def _analyze_test_failures(self, code: str, pytest_output: str) -> dict:
+    def _analyze_failures(self, code: str, pytest_output: str = None, pylint_output: str = None, pylint_score: float = None) -> dict:
+        """
+        Analyse les échecs de tests et les problèmes de Pylint.
+        Retourne un JSON compatible avec le FixerAgent.
+        """
+        # Construire le prompt pour l'agent LLM
+        prompt_parts = []
+        if pytest_output:
+            prompt_parts.append(f"## PYTEST OUTPUT:\n{pytest_output}")
+        if pylint_output:
+            prompt_parts.append(f"## PYLINT OUTPUT:\n{pylint_output}\nScore: {pylint_score}")
         prompt = f"""
-ROLE: Python Test Failure Analyzer Expert
-TASK: Analyze pytest failures and produce a refactoring plan compatible with the FixerAgent.
-
+ROLE: Python Test & Code Analyzer Expert
+TASK: Analyze pytest failures and Pylint issues, producing a refactoring plan compatible with the FixerAgent.
 OUTPUT: STRICT JSON only.
-
 ## ABSOLUTE RULES (VERY IMPORTANT):
 - DO NOT use ```json
 - DO NOT use ```
 - DO NOT wrap the output in markdown
 - DO NOT add explanations or comments
 - Output must start with {{ and end with }}
-
 ## MANDATORY OUTPUT FORMAT:
 {{
   "issues_found": integer,
   "refactoring_plan": [
     {{
       "priority": "CRITICAL|HIGH|MEDIUM",
-      "category": "IMPORT_ERROR|INPUT_BLOCKING|MAIN_EXECUTION|ASSERTION_FAILURE",
+      "category": "IMPORT_ERROR|INPUT_BLOCKING|MAIN_EXECUTION|ASSERTION_FAILURE|CONVENTION|REFACTORING",
       "issue": "brief description",
       "line": integer,
-      "code_snippet": "pytest error or relevant code",
+      "code_snippet": "pytest or pylint relevant code",
       "suggestion": "specific fix needed"
     }}
   ],
-  "pylint_score": 0.0,
+  "pylint_score": {pylint_score if pylint_score is not None else 0.0},
   "summary": "one sentence summary"
 }}
-
 ## RULES:
 - Each pytest failure MUST generate exactly ONE refactoring_plan entry
+- Each Pylint issue MUST generate exactly ONE refactoring_plan entry
 - line = 0 if exact line is unknown
-- code_snippet must come from pytest output
+- code_snippet must come from pytest or pylint output
 - suggestion must describe an explicit code change
 - DO NOT invent problems
-
-## PYTEST OUTPUT:
-{pytest_output}
-
 ## CODE BEING TESTED:
 {code}
-
+## OUTPUT TO ANALYZE:
+{chr(10).join(prompt_parts)}
 ## YOUR RESPONSE (PURE JSON ONLY):
 """
-
         try:
             response = self.llm.invoke(prompt)
-            analysis = response.content.strip()
-            
-            
-            
             import json
-            result = json.loads(analysis)
-            
+            result = json.loads(response.content.strip())
             if self.verbose:
-                print(f"\n🔍 Analyse: {result.get('issues_found', 0)} issues trouvées")
-            
+                print(f"\n🔍 Analyse combinée: {result.get('issues_found', 0)} issues trouvées")
+
+            log_experiment(
+            agent_name="JudgeAgent",
+            model_used="llama-3.3-70b-versatile",
+            action=ActionType.ANALYSIS,
+            details={
+                "input_prompt": prompt,
+                "output_response": response.content,
+                "issues_detected": len(result.get("refactoring_plan", []))
+            },
+            status="SUCCESS"
+        )
             return result
-            
         except Exception as e:
             if self.verbose:
                 print(f"⚠️ Erreur lors de l'analyse: {e}")
-            
-                   # Fallback COMPATIBLE FixerAgent
+            # Fallback compatible FixerAgent
+            fallback_code_snippet = ""
+            if pytest_output:
+                fallback_code_snippet += pytest_output[:200]
+            if pylint_output:
+                fallback_code_snippet += "\n" + pylint_output[:200]
             return {
-              "issues_found": 1,
-              "refactoring_plan": [
-                {
-                "priority": "CRITICAL",
-                "category": "ASSERTION_FAILURE",
-                "issue": "Judge analysis failed",
-                "line": 0,
-                "code_snippet": pytest_output[:200],
-                "suggestion": "Inspect pytest output manually"
-                }
-              ],
-              "pylint_score": 0.0,
-              "summary": "Judge failed to analyze pytest output"
-    }
+                "issues_found": 1,
+                "refactoring_plan": [
+                    {
+                        "priority": "CRITICAL",
+                        "category": "ASSERTION_FAILURE" if pytest_output else "REFACTORING",
+                        "issue": "Judge analysis failed",
+                        "line": 0,
+                        "code_snippet": fallback_code_snippet,
+                        "suggestion": "Inspect outputs manually"
+                    }
+                ],
+                "pylint_score": pylint_score if pylint_score is not None else 0.0,
+                "summary": "Judge failed to analyze outputs"
+            }
