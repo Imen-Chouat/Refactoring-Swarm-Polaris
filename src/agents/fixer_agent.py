@@ -1,7 +1,7 @@
 from pathlib import Path
 from langchain_groq import ChatGroq
 from src.tools.file_tools import read_file
-from src.utils.logger import log_experiment, ActionType  # ✅ Ajout
+from src.utils.logger import log_experiment, ActionType 
 import os
 
 
@@ -12,28 +12,28 @@ class FixerAgent:
     def __init__(self, verbose: bool = False, groq_api_key: str = None):
         self.verbose = verbose
 
-        # Initialisation du LLM Groq
+        # Initialisation du LLM Groq - Groq LLM initialization
         self.llm = ChatGroq(
             model="llama-3.3-70b-versatile",
             temperature=0,
             api_key=groq_api_key,
         )
 
-        # Lecture du prompt
+        # Lecture du prompt de correction de code - read the code fixing prompt
         with open("src/prompts/fixer_prompt.txt", encoding="utf-8") as f:
             self.prompt_template = f.read()
 
     def fix_file(self, file_path: Path, refactoring_plan: list):
-        """Corrige le code en utilisant le plan de refactoring fourni."""
+        """Corrige le code en utilisant le plan de refactoring fourni par l'AuditorAgent."""
         if not refactoring_plan:
             if self.verbose:
-                print(f"✅ Aucun problème à corriger pour {file_path}")
+                print(f"Aucun problème à corriger pour {file_path}  — passage au fichier suivant.")
             return None, []
 
-        # Lecture du code original
+        # Lecture du code original du fichier à corriger - read the original code from the file to be fixed
         code = read_file(str(file_path))
 
-        # Création du prompt à envoyer à Groq
+        # Création du prompt à envoyer à Groq LLM pour correction du code - create the prompt to send to Groq LLM for code fixing
         prompt = f"""
 {self.prompt_template}
 
@@ -45,19 +45,19 @@ REFACTORING PLAN:
 """
 
         if self.verbose:
-            print(f"🚀 Envoi du fichier {file_path} à Groq pour correction...")
+            print(f"Envoi du fichier {file_path} à Groq pour correction...")
 
-        # Appel à Groq
+        # Appel à Groq LLM pour obtenir le code corrigé - Call Groq LLM to get the fixed code
         response = self.llm.invoke(prompt)
         fixed_code = response.content
         
-        # ✅ AJOUT : Nettoyage du code généré
+        #Nettoyage du code généré - Cleaning the generated code
         fixed_code = self._clean_generated_code(fixed_code)
 
         if self.verbose:
-            print(f"✅ Correction terminée pour {file_path}")
+            print(f"Correction terminée pour {file_path} .")
 
-        # ✅ AJOUT : Logging de l'expérimentation
+        # Logging the experiment in the experiment tracking system - Logging de l'expérimentation dans le système de suivi des expériences 
         log_experiment(
             agent_name="FixerAgent",
             model_used="llama-3.3-70b-versatile",
@@ -78,7 +78,7 @@ REFACTORING PLAN:
     def _clean_generated_code(self, code: str) -> str:
         """
         Nettoie le code généré par le LLM.
-        Supprime les markdown, explications, et formatage indésirable.
+        Supprime les markdown, explications, et formatage indésirable. 
         """
         # Supprimer les balises markdown ```python et ```
         if "```python" in code:
@@ -95,11 +95,11 @@ REFACTORING PLAN:
             if not cleaned_lines and not line.strip():
                 continue
             
-            # Ignorer les explications type "Here's the fixed code:"
+            # Ignorer les explications type "Here's the fixed code:" - Ignore explanation lines
             if line.strip().lower().startswith(('here', 'the fixed', 'i have', 'i\'ve')):
                 continue
             
-            # Supprimer les commentaires FIXME répétés (bug de génération)
+            # Remove repeated FIXME comments - Supprimer les commentaires FIXME répétés (bug de génération) 
             if line.strip().startswith('# FIXME:'):
                 # Ne garder que le premier FIXME par fichier
                 if cleaned_lines and any('# FIXME:' in l for l in cleaned_lines):
@@ -107,13 +107,13 @@ REFACTORING PLAN:
             
             cleaned_lines.append(line)
         
-        # Rejoindre les lignes
+        # Rejoindre les lignes nettoyées - Join cleaned lines together
         cleaned_code = '\n'.join(cleaned_lines)
         
-        # Supprimer les espaces en fin de ligne
+        # Supprimer les espaces en fin de ligne - Remove trailing spaces at the end of lines 
         cleaned_code = '\n'.join(line.rstrip() for line in cleaned_code.split('\n'))
         
-        # S'assurer qu'il y a une ligne vide à la fin
+        # S'assurer qu'il y a une ligne vide à la fin - Ensure there's a newline at the end of the file
         if cleaned_code and not cleaned_code.endswith('\n'):
             cleaned_code += '\n'
         

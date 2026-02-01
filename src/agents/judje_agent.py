@@ -47,7 +47,7 @@ class JudgeAgent:
         Évalue rapidement la qualité du code avec pytest + Pylint.
         Génère automatiquement des tests de base si aucun n'existe.
         """
-        result = {
+        result_final = {
             "passed": False,
             "pylint_score": None,
             "pytest_output": "",
@@ -81,108 +81,108 @@ class JudgeAgent:
             tmp_test_file.write(test_code)
             tmp_test_path = tmp_test_file.name
 
-        # ⚡ Affichage du fichier de test pour inspection
-        print(f"\n📂 Fichier de test temporaire créé : {tmp_test_path}")
-        print("📝 Contenu du fichier de test :\n")
+        # Affichage du fichier de test pour inspection - Display test file for inspection 
+        print(f"\nFichier de test temporaire créé : {tmp_test_path}")
+        print("Contenu du fichier de test :\n")
         print(test_code)
         
         try:
             # 4. Exécuter pytest sur le fichier de test
             test_result = run_pytest(tmp_test_path)
-            result["pytest_passed"] = test_result["passed"]
-            result["pytest_output"] = test_result.get("output", "")
-            result["tests_generated"] = True
+            result_final["pytest_passed"] = test_result["passed"]
+            result_final["pytest_output"] = test_result.get("output", "")
+            result_final["tests_generated"] = True
             
-            # ⚡ Affichage du résultat complet de pytest
-            print("\n✅ Résultat de pytest :")
-            print(result["pytest_output"])
+            # Affichage du résultat complet de pytest - Display full pytest result
+            print("\n Résultat de pytest :")
+            print(result_final["pytest_output"])
 
-            # 6. Exécuter pylint sur le code original
-            pylint_result = run_pylint(tmp_code_path)
-            result["pylint_score"] = pylint_result.get("score")
-            result["pylint_output"] = pylint_result.get("output")
-            print("resultat pylint",result["pylint_output"])
+            # 6. Exécuter pylint sur le code original - Run pylint on the original code - Direct use of pylint tool 
+            pylint_result_dictionary = run_pylint(tmp_code_path)
+            result_final["pylint_score"] = pylint_result_dictionary.get("score")
+            result_final["pylint_output"] = pylint_result_dictionary.get("output")
+            print("resultat pylint",result_final["pylint_output"])
 
 
-            if result["pytest_passed"] and result["pylint_score"] is not None and result["pylint_score"] >= 7.0:
-             result["passed"] = True
+            if result_final["pytest_passed"] and result_final["pylint_score"] is not None and result_final["pylint_score"] >= 7.0:
+             result_final["passed"] = True
             else:
-             result["passed"] = False
+             result_final["passed"] = False
 
 
             
-            print("le resultat est ",result)
-            # 5. Analyser les échecs de tests et problèmes de code
+            print("le resultat est ",result_final)
+            # 5. Analyser les échecs de tests et problèmes de code avec LLM si nécessaire - Analyze test failures and code issues with LLM if needed
             needs_analysis = False
             pytest_output_to_analyze = None
             pylint_output_to_analyze = None
 
-            # Vérifier si les tests unitaires ont échoué
-            if not result["pytest_passed"]:
+            # Vérifier si les tests unitaires ont échoué - Check if unit tests failed 
+            if not result_final["pytest_passed"]:
                needs_analysis = True
-               pytest_output_to_analyze = result["pytest_output"]
+               pytest_output_to_analyze = result_final["pytest_output"]
 
-            # Vérifier si le score Pylint est insuffisant
-            if result.get("pylint_score") is not None and result["pylint_score"] < 7.0:
+            # Vérifier si le score Pylint est insuffisant - Check if Pylint score is insufficient
+            if result_final.get("pylint_score") is not None and result_final["pylint_score"] < 7.0:
               needs_analysis = True
-              pylint_output_to_analyze = result.get("pylint_output")
+              pylint_output_to_analyze = result_final.get("pylint_output")
 
             if needs_analysis:
                    if self.verbose:
-                      print("\n🔍 Analyse combinée des échecs de tests et du code...")
+                      print("\n Analyse combinée des échecs de tests et du code...")
                       
-                   # Appeler fonction qui combine pytest + pylint
+                   # Appeler fonction qui combine pytest + pylint outputs - Call function that combines pytest + pylint outputs
                    analysis = self._analyze_failures(
                     code,
                     pytest_output=pytest_output_to_analyze,
                     pylint_output=pylint_output_to_analyze,
-                    pylint_score=result.get("pylint_score")
+                    pylint_score=result_final.get("pylint_score")
                    )
     
-                   result["refactoring_test_failure"] = analysis
+                   result_final["refactoring_test_failure"] = analysis
                    if self.verbose:
-                      print(f"📋 Refactoring disponible dans result['refactoring_test_failure']")
-                      print(result["refactoring_test_failure"])
+                      print(f" Refactoring disponible dans result_final['refactoring_test_failure']")
+                      print(result_final["refactoring_test_failure"])
 
 
 
             
             if self.verbose:
-                status = "YES" if result["tests_generated"] else "NO"
-                score = result["pylint_score"]
+                status = "YES" if result_final["tests_generated"] else "NO"
+                score = result_final["pylint_score"]
                 score_str = f"{score:.2f}/10" if score is not None else "N/A"
                 print(f"   [Judge] Generated tests: {status}")
             
-            # 7. Vérifier les critères d'acceptation
-            if not result["pytest_passed"]:
-                result["errors"].append("Generated tests failed")
+            # 7. Vérifier les critères d'acceptation finale - Check final acceptance criteria
+            if not result_final["pytest_passed"]:
+                result_final["errors"].append("Generated tests failed")
             
-            # 🔹 Déterminer le status final pour le log
-            if not result.get("pytest_passed", False) or result["pylint_score"] is None or result["pylint_score"] < 7.0:
+            # Déterminer le status final pour le log 
+            if not result_final.get("pytest_passed", False) or result_final["pylint_score"] is None or result_final["pylint_score"] < 7.0:
               log_status = "FAILURE"
             else:
               log_status = "SUCCESS"
 
-            self._log_evaluation(file_path or tmp_code_path, code, result, status=log_status)
+            self._log_evaluation(file_path or tmp_code_path, code, result_final, status=log_status)
             
-            return result
+            return result_final
             
         except FileNotFoundError as e:
             error_msg = f"pytest non installé: {e}"
-            result["errors"].append(error_msg)
+            result_final["errors"].append(error_msg)
             if self.verbose:
-                print(f"   ❌ {error_msg}")
-                print("   💡 Installation: pip install pytest")
-            self._log_evaluation(file_path, code, result, "FAILURE")
-            return result
+                print(f"Error ,  {error_msg}")
+                print(" Installation: pip install pytest")
+            self._log_evaluation(file_path, code, result_final, "FAILURE")
+            return result_final
             
         except Exception as e:
             error_msg = f"Erreur lors de l'évaluation: {e}"
-            result["errors"].append(error_msg)
+            result_final["errors"].append(error_msg)
             if self.verbose:
                 print(f" {error_msg}")
-            self._log_evaluation(file_path, code, result, "FAILURE")
-            return result
+            self._log_evaluation(file_path, code, result_final, "FAILURE")
+            return result_final
             
         finally:
             # Nettoyage des fichiers temporaires
@@ -236,43 +236,43 @@ SEMANTIC EXPECTATIONS (Category A - STRICT MODE)
 These functions MUST follow their semantic meaning:
 
 add/addition:
-  ✅ add(2, 3) == 5 (addition, NOT multiplication)
-  ✅ add(0, 5) == 5
-  ✅ add(-2, 3) == 1
-  ✅ add(-2, -3) == -5
-  ❌ add(2, 3) == 6 (WRONG - that's multiplication!)
+  add(2, 3) == 5 (addition, NOT multiplication)
+  add(0, 5) == 5
+  add(-2, 3) == 1
+  add(-2, -3) == -5
+  add(2, 3) == 6 (WRONG - that's multiplication!)
 
 subtract/subtraction:
-  ✅ subtract(5, 3) == 2
-  ✅ subtract(0, 5) == -5
-  ✅ subtract(-2, -3) == 1
+  subtract(5, 3) == 2
+  subtract(0, 5) == -5
+  subtract(-2, -3) == 1
 
 multiply/multiplication:
-  ✅ multiply(2, 3) == 6
-  ✅ multiply(0, 5) == 0
-  ✅ multiply(-2, 3) == -6
+  multiply(2, 3) == 6
+  multiply(0, 5) == 0
+  multiply(-2, 3) == -6
 
 divide/diviser/division:
-  ✅ divide(10, 2) == 5.0
-  ✅ divide(9, 2) == 4.5
-  ✅ diviser(10, 2) == 5.0
-  ✅ divide(10, 0) raises ZeroDivisionError
-  ❌ divide(10, 2) == 20 (WRONG!)
+  divide(10, 2) == 5.0
+  divide(9, 2) == 4.5
+  diviser(10, 2) == 5.0
+  divide(10, 0) raises ZeroDivisionError
+  divide(10, 2) == 20 (WRONG!)
 
 calculate_average/get_average/mean:
-  ✅ calculate_average([10, 20]) == 15.0 (sum/length)
-  ✅ calculate_average([1, 2, 3]) == 2.0
-  ✅ calculate_average([]) raises ValueError or returns None
-  ❌ calculate_average([10, 20]) == 30.0 (WRONG - that's sum, not average!)
+  calculate_average([10, 20]) == 15.0 (sum/length)
+  calculate_average([1, 2, 3]) == 2.0
+  calculate_average([]) raises ValueError or returns None
+  calculate_average([10, 20]) == 30.0 (WRONG - that's sum, not average!)
 
 validate_email/check_email/is_valid_email:
-  ✅ validate_email("test@example.com") == True
-  ✅ validate_email("invalid") == False
-  ✅ validate_email("no-at-sign.com") == False
+  validate_email("test@example.com") == True
+  validate_email("invalid") == False
+  validate_email("no-at-sign.com") == False
 
 sort_list/sort_array:
-  ✅ sort_list([3, 1, 2]) == [1, 2, 3]
-  ✅ sort_list([]) == []
+  sort_list([3, 1, 2]) == [1, 2, 3]
+  sort_list([]) == []
 
 ═══════════════════════════════════════════════════════════════════
 TEST COVERAGE REQUIREMENTS (ALL FUNCTIONS)
@@ -348,10 +348,10 @@ def test_custom_function_error():
 WRONG EXAMPLES (NEVER DO THIS)
 ═══════════════════════════════════════════════════════════════════
 
-❌ assert {module_name}.add(2, 3) == 6  # Wrong! add should return 5
-❌ assert {module_name}.add(0, 5) == 0  # Wrong! 0 + 5 = 5
-❌ assert {module_name}.calculate_average([10, 20]) == 30.0  # Wrong! That's sum
-❌ assert {module_name}.divide(10, 2) == 20  # Wrong! 10 / 2 = 5.0
+assert {module_name}.add(2, 3) == 6  # Wrong! add should return 5
+assert {module_name}.add(0, 5) == 0  # Wrong! 0 + 5 = 5
+assert {module_name}.calculate_average([10, 20]) == 30.0  # Wrong! That's sum
+assert {module_name}.divide(10, 2) == 20  # Wrong! 10 / 2 = 5.0
 
 ═══════════════════════════════════════════════════════════════════
 PYTHON CODE TO TEST
@@ -387,7 +387,7 @@ CRITICAL REMINDER:
 - Semantic functions (add, divide, etc.) MUST follow semantic meaning
 - If a function named "add" does multiplication, the test SHOULD FAIL
 - This is CORRECT behavior - it helps detect bugs!
-- Expected: add(2, 3) == 5, Got: 6 → TEST FAILS ✅ (Bug detected!)
+- Expected: add(2, 3) == 5, Got: 6 → TEST FAILS (Bug detected!)
 
 GENERATED SEMANTIC TEST CODE (Python only, no markdown):
 """
@@ -395,10 +395,10 @@ GENERATED SEMANTIC TEST CODE (Python only, no markdown):
         try:
             response = self.llm.invoke(prompt)
             test_code = response.content
-            # ✅ Nettoyer le code généré pour pytest
+            # Nettoyer le code généré pour pytest - Clean generated code for pytest
             test_code = test_code.replace("```python", "").replace("```", "").strip()
             
-            # Vérifier que le code contient au moins une fonction test_
+            # Vérifier que le code contient au moins une fonction test_ - Ensure code contains at least one test_ function -
             if "def test_" not in test_code:
                 raise ValueError("Generated code doesn't contain test functions")
             
@@ -420,13 +420,13 @@ GENERATED SEMANTIC TEST CODE (Python only, no markdown):
             
         except Exception as e:
             if self.verbose:
-                print(f"   ⚠️  LLM test generation failed: {e}, using fallback")
+                print(f"  LLM test generation failed: {e}, using fallback")
             return "def test_dummy():\n    assert True"
 
 
     def evaluate_file(self, file_path: Path) -> dict:
         """
-        Évalue directement un fichier existant.
+        Évalue directement un fichier existant. 
         """
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
@@ -467,7 +467,7 @@ GENERATED SEMANTIC TEST CODE (Python only, no markdown):
         Analyse les échecs de tests et les problèmes de Pylint.
         Retourne un JSON compatible avec le FixerAgent.
         """
-        # Construire le prompt pour l'agent LLM
+        # Construire le prompt pour l'agent LLM d'analyse combinée - Build prompt for combined analysis LLM agent
         prompt_parts = []
         if pytest_output:
             prompt_parts.append(f"## PYTEST OUTPUT:\n{pytest_output}")
@@ -517,7 +517,7 @@ OUTPUT: STRICT JSON only.
             import json
             result = json.loads(response.content.strip())
             if self.verbose:
-                print(f"\n🔍 Analyse combinée: {result.get('issues_found', 0)} issues trouvées")
+                print(f"\n Analyse combinée: {result.get('issues_found', 0)} issues trouvées .")
 
             log_experiment(
             agent_name="JudgeAgent",
@@ -533,7 +533,7 @@ OUTPUT: STRICT JSON only.
             return result
         except Exception as e:
             if self.verbose:
-                print(f"⚠️ Erreur lors de l'analyse: {e}")
+                print(f"Erreur lors de l'analyse: {e}")
             # Fallback compatible FixerAgent
             fallback_code_snippet = ""
             if pytest_output:
