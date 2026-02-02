@@ -16,7 +16,7 @@ def generate_test_logs(num_entries=20):
     logs_file = logs_dir / "experiment_data.json"
     
     print("=" * 60)
-    print("🧪 GÉNÉRATION DE LOGS DE TEST - Data Officer")
+    print(" GÉNÉRATION DE LOGS DE TEST - Data Officer")
     print("=" * 60)
     
     # Données de test
@@ -52,9 +52,9 @@ def generate_test_logs(num_entries=20):
     with open(logs_file, 'w', encoding='utf-8') as f:
         json.dump(logs_data, f, indent=2, ensure_ascii=False)
     
-    print(f"✅ {num_entries} logs générés")
-    print(f"📁 Chemin: {logs_file}")
-    print("\n💡 Utilisation:")
+    print(f" {num_entries} logs générés")
+    print(f" Chemin: {logs_file}")
+    print("\n Utilisation:")
     print("   1. python src/utils/validate_logs.py")
     print("   2. python src/data_quality/check_all_agents.py")
     

@@ -39,7 +39,7 @@ def log_experiment(agent_name: str, model_used: str, action: ActionType, details
     elif action in valid_actions:
         action_str = action
     else:
-        raise ValueError(f"❌ Action invalide : '{action}'. Utilisez la classe ActionType (ex: ActionType.FIX).")
+        raise ValueError(f" Action invalide : '{action}'. Utilisez la classe ActionType (ex: ActionType.FIX).")
 
     # --- 2. VALIDATION STRICTE DES DONNÉES (Prompts) ---
     # Pour l'analyse scientifique, nous avons absolument besoin du prompt et de la réponse
@@ -50,7 +50,7 @@ def log_experiment(agent_name: str, model_used: str, action: ActionType, details
         
         if missing_keys:
             raise ValueError(
-                f"❌ Erreur de Logging (Agent: {agent_name}) : "
+                f" Erreur de Logging (Agent: {agent_name}) : "
                 f"Les champs {missing_keys} sont manquants dans le dictionnaire 'details'. "
                 f"Ils sont OBLIGATOIRES pour valider le TP."
             )
@@ -79,7 +79,7 @@ def log_experiment(agent_name: str, model_used: str, action: ActionType, details
                     data = json.loads(content)
         except json.JSONDecodeError:
             # Si le fichier est corrompu, on repart à zéro (ou on pourrait sauvegarder un backup)
-            print(f"⚠️ Attention : Le fichier de logs {LOG_FILE} était corrompu. Une nouvelle liste a été créée.")
+            print(f" Attention : Le fichier de logs {LOG_FILE} était corrompu. Une nouvelle liste a été créée.")
             data = []
 
     data.append(entry)

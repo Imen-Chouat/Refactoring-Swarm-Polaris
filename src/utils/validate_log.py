@@ -13,17 +13,17 @@ def validate_log():
     logs_path = Path(__file__).parent.parent.parent / "logs" / "experiment_data.json"
     
     print("=" * 60)
-    print("✅ VALIDATION DES LOGS - Data Officer")
+    print(" VALIDATION DES LOGS - Data Officer")
     print("=" * 60)
     
     # 1. Vérifier l'existence
     if not logs_path.exists():
-        print("❌ ERREUR: Fichier experiment_data.json introuvable")
+        print(" ERREUR: Fichier experiment_data.json introuvable")
         print(f"   Chemin: {logs_path}")
         return False
     
     if logs_path.stat().st_size == 0:
-        print("❌ ERREUR: Fichier vide")
+        print(" ERREUR: Fichier vide")
         return False
     
     try:
@@ -31,15 +31,15 @@ def validate_log():
         with open(logs_path, 'r', encoding='utf-8') as f:
             logs_data = json.load(f)
         
-        print(f"✅ Fichier trouvé: {logs_path}")
-        print(f"✅ Format JSON valide")
+        print(f" Fichier trouvé: {logs_path}")
+        print(f" Format JSON valide")
         
         # 3. Vérifier que c'est une liste
         if not isinstance(logs_data, list):
-            print("❌ ERREUR: Doit être un tableau (list) JSON")
+            print(" ERREUR: Doit être un tableau (list) JSON")
             return False
         
-        print(f"📊 Nombre d'entrées: {len(logs_data)}")
+        print(f" Nombre d'entrées: {len(logs_data)}")
         
         # 4. Vérifier chaque entrée
         required_fields = ['agent', 'model', 'action', 'timestamp', 'details', 'status']
@@ -78,16 +78,16 @@ def validate_log():
         
         # 5. Afficher les résultats
         if errors:
-            print("\n❌ ERREURS CRITIQUES:")
+            print("\n ERREURS CRITIQUES:")
             for error in errors[:5]:
                 print(f"   - {error}")
             if len(errors) > 5:
                 print(f"   ... et {len(errors) - 5} erreurs supplémentaires")
         else:
-            print("\n✅ Aucune erreur critique")
+            print("\n Aucune erreur critique")
         
         if warnings:
-            print("\n⚠️  AVERTISSEMENTS:")
+            print("\n AVERTISSEMENTS:")
             for warning in warnings[:3]:
                 print(f"   - {warning}")
             if len(warnings) > 3:
@@ -95,7 +95,7 @@ def validate_log():
         
         # 6. Statistiques
         if logs_data:
-            print("\n📈 STATISTIQUES:")
+            print("\n STATISTIQUES:")
             
             agents = {}
             actions = {}
@@ -121,17 +121,17 @@ def validate_log():
         print("\n" + "=" * 60)
         
         if not errors:
-            print("✅ VALIDATION RÉUSSIE - Fichier de logs conforme")
+            print(" VALIDATION RÉUSSIE - Fichier de logs conforme")
             return True
         else:
-            print("❌ VALIDATION ÉCHOUÉE - Corrections nécessaires")
+            print(" VALIDATION ÉCHOUÉE - Corrections nécessaires")
             return False
             
     except json.JSONDecodeError as e:
-        print(f"❌ ERREUR JSON: {e}")
+        print(f" ERREUR JSON: {e}")
         return False
     except Exception as e:
-        print(f"❌ ERREUR: {e}")
+        print(f" ERREUR: {e}")
         return False
 
 def backup_logs():
@@ -144,7 +144,7 @@ def backup_logs():
         
         import shutil
         shutil.copy2(logs_path, backup_path)
-        print(f"📁 Sauvegarde créée: {backup_path.name}")
+        print(f" Sauvegarde créée: {backup_path.name}")
         return backup_path
     
     return None
@@ -157,5 +157,5 @@ if __name__ == "__main__":
     is_valid = validate_log()
     
     if not is_valid:
-        print("\n🚨 ACTION REQUISE: Corriger les erreurs!")
+        print("\n ACTION REQUISE: Corriger les erreurs!")
         exit(1)

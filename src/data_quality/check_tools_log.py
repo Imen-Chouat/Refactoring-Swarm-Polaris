@@ -38,14 +38,14 @@ def check_tools_log():
             with open(tool_file, 'r', encoding='utf-8') as f:
                 content = f.read()
             
-            # Vérifier si le fichier importe le logger
+            # Vérifier si le fichier importe le logger ou log_experiment - logger import or log_experiment call
             logger_import_exists = any(phrase in content for phrase in [
                 "from src.utils.logger import",
                 "import logger",
                 "log_experiment"
             ])
             
-            # Vérifier si le fichier appelle log_experiment
+            # Vérifier si le fichier appelle log_experiment - call to log_experiment
             call_log_experiment = "log_experiment(" in content
             
             if logger_import_exists and call_log_experiment:
@@ -56,7 +56,7 @@ def check_tools_log():
         except Exception as e:
             print(f"Erreur lecture {tool_file.name}: {e}")
     
-    # 3. Afficher les résultats
+    # 3. Afficher les résultats de l'analyse des outils - Display results of tool analysis 
     print("\nOUTILS AVEC LOGGER:")
     if tools_with_logger:
         for tool in tools_with_logger:
@@ -67,14 +67,14 @@ def check_tools_log():
     if tools_not_logger:
         print("\nOUTILS SANS LOGGER (CRITIQUE):")
         for tool in tools_not_logger:
-            print(f"   ✗ {tool}")
+            print(f"   X {tool}")
         
         print("\n RECOMMANDATION:")
         print("   Les outils qui appellent des LLM DEVRAIENT logguer.")
         print("   Exemple: Si pylint_tool.py utilise un LLM pour l'analyse,")
         print("   il devrait appeler log_experiment().")
     
-    # 4. Vérifier dans les logs existants
+    # 4. Vérifier dans les logs existants - Check existing logs
     print("\nANALYSE DES LOGS EXISTANTS:")
     
     if LOG_FILE.exists():
@@ -82,7 +82,7 @@ def check_tools_log():
             with open(LOG_FILE, 'r', encoding='utf-8') as f:
                 logs = json.load(f)
             
-            # Chercher les logs des outils
+            # Chercher les logs des outils  - Look for tool logs
             tool_logs = []
             for log in logs:
                 agent = log.get('agent', log.get('agent_name', ''))
@@ -104,8 +104,8 @@ def check_tools_log():
     else:
         print("  Aucun fichier de logs existant")
     
-    # 5. Vérification spécifique de VOS outils
-    print("\n🔍 ANALYSE DE VOS OUTILS SPÉCIFIQUES:")
+    # 5. Vérification spécifique de VOS outils - Specific check for YOUR tools
+    print("\n ANALYSE DE VOS OUTILS SPÉCIFIQUES:")
     
     your_tools = {
         "file_operations.py": "Ne devrait pas loguer (pas de LLM)",
@@ -131,14 +131,14 @@ def check_tools_log():
     
     print("\n" + "="*60)
     
-    # Critère de succès
-    # Si aucun outil n'utilise de LLM, c'est OK
-    # Si des outils utilisent des LLM mais ne loguent pas, c'est un problème
+    # Critère de succès final - Final success criteria
+    # Si aucun outil n'utilise de LLM, c'est OK - if no tools use LLM, it's OK
+    # Si des outils utilisent des LLM mais ne loguent pas, c'est un problème - if tools use LLM but don't log, it's an issue
     if not tools_not_logger or len(tools_with_logger) > 0:
-        print(" OUTILS - LOGGING VALIDÉ (ou non nécessaire)")
+        print(" OUTILS - LOGGING VALIDÉ (ou non nécessaire) ")
         return True
     else:
-        print(" OUTILS - LOGGING RECOMMANDÉ POUR LES LLM")
+        print(" OUTILS - LOGGING RECOMMANDÉ POUR LES LLM UTILISANT DES OUTILS  ")
         return True  # Pas critique, mais recommandé
 
 def check_tool_imports():

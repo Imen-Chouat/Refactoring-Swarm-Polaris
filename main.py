@@ -1,103 +1,117 @@
-# main.py
-import argparse
 import os
 import sys
+from pathlib import Path
+
+from src.agents.auditor_agent import AuditorAgent
+from src.agents.fixer_agent import FixerAgent
+from src.agents.judge_agent import JudgeAgent
 from dotenv import load_dotenv
-from src.utils.logger import log_experiment
-from src.agents.auditor_agent import run_auditor
-from src.agents.fixer_agent import run_fixer
-from src.agents.judge_agent import run_judge
 
-# Load environment variables early
-load_dotenv()
 
-MAX_ITERATIONS = 10
-
-def get_python_files(target_dir):
-    """Recursively find all Python files in the target directory."""
-    python_files = []
+def get_python_files(target_dir: str):
+    """Récupère tous les fichiers Python dans le dossier et sous-dossiers."""
+    python_files_list = []
     for root, _, files in os.walk(target_dir):
         for f in files:
             if f.endswith(".py"):
-                python_files.append(os.path.join(root, f))
-    return python_files
+                python_files_list.append(os.path.join(root, f))
+    return python_files_list
+
 
 def main():
-    # -------------------------
-    # Command-line argument parsing
-    # -------------------------
-    parser = argparse.ArgumentParser(description="The Refactoring Swarm: Automatically refactor Python code")
-    parser.add_argument(
-        "--target_dir",
-        type=str,
-        required=True,
-        help="Path to the directory containing buggy Python code"
-    )
-    args = parser.parse_args()
-    target_dir = args.target_dir
-
-    # -------------------------
-    # Validate target directory
-    # -------------------------
+    target_dir = "./sandbox"
     if not os.path.exists(target_dir):
-        print(f"Dossier {target_dir} introuvable.")
-        log_experiment("System", "ERROR", f"Target not found: {target_dir}", "ERROR")
+        print(f"Dossier {target_dir} introuvable . Veuillez créer un dossier 'sandbox' avec des fichiers Python à analyser.")
         sys.exit(1)
 
-    if not os.path.isdir(target_dir):
-        print(f"{target_dir} n'est pas un dossier valide.")
-        log_experiment("System", "ERROR", f"Invalid directory: {target_dir}", "ERROR")
-        sys.exit(1)
+    # Charger les variables d'environnement
+    load_dotenv()
+    groq_api_key = os.environ.get("GROQ_API_KEY")
+    if not groq_api_key:
+        raise ValueError("La variable d'environnement GROQ_API_KEY n'est pas définie . Veuillez la définir dans le fichier .env.")
 
-    print(f"DEMARRAGE SUR : {target_dir}")
-    log_experiment("System", "STARTUP", f"Target: {target_dir}", "INFO")
+    # Initialisation des agents
+    auditor = AuditorAgent(verbose=True)
+    fixer = FixerAgent(verbose=True)
+    judge = JudgeAgent(verbose=True)
 
-    # -------------------------
-    # Collect Python files
-    # -------------------------
-    python_files = get_python_files(target_dir)
-    if not python_files:
-        print(f"Aucun fichier Python trouvé dans {target_dir}")
-        log_experiment("System", "INFO", "No Python files found", "WARNING")
-        sys.exit(0)
+    python_files_list = get_python_files(target_dir)
+    if not python_files_list:
+        print("Aucun fichier Python trouvé (dans le dossier 'sandbox'.")
+        return
 
-    # -------------------------
-    # Refactoring swarm loop
-    # -------------------------
-    iteration = 0
-    tests_passed = False
+    for py_file in python_files_list:
+        print(f"\n{'='*60}")
+        print(f"1 ere etape - Analyse de {py_file} : ")
+        print(f"{'='*60}")
 
-    while iteration < MAX_ITERATIONS and not tests_passed:
-        print(f"\n Iteration {iteration + 1}")
-        log_experiment("System", "ITERATION_START", f"Iteration {iteration + 1}", "INFO")
+        # 1 st step AUDIT
+        result = auditor.analyze_file(Path(py_file))
+        refactoring_plan = result.get("refactoring_plan", [])
 
-        #AUDITOR PHASE
-        refactoring_plans = {}
-        for file_path in python_files:
-            plan = run_auditor(file_path)
-            refactoring_plans[file_path] = plan
-            log_experiment("Auditor", "PLAN_CREATED", f"{file_path}: {plan}", "INFO")
+        if not refactoring_plan:
+            print("Aucun problème détecté — passage au fichier suivant.")
+            continue
 
-        # FIXER PHASE
-        for file_path, plan in refactoring_plans.items():
-            run_fixer(file_path, plan)
-            log_experiment("Fixer", "FILE_FIXED", f"{file_path}", "INFO")
+        print(f"{len(refactoring_plan)} problème(s) détecté(s): ")
+        for i, Singleissue in enumerate(refactoring_plan, 1):
+            print(f"  {i}. [{Singleissue.get('priority','UNKNOWN')}] {Singleissue.get('issue','No description')}")
+            print(f"     [{Singleissue.get('category','UNKNOWN')}] {Singleissue.get('issue','No description')}")
+            print(f"     Ligne {Singleissue.get('line','?')}: {Singleissue.get('code_snippet','')}")
+            print(f"     Suggestion: {Singleissue.get('suggestion','')}")
 
-        #  JUDGE PHASE
-        tests_passed = run_judge(target_dir)
-        log_experiment("Judge", "TESTS_PASSED", f"{tests_passed}", "INFO")
+        # 2 nd step : FIX
+        fixed_code, _ = fixer.fix_file(Path(py_file), refactoring_plan)
+        if fixed_code:
+            with open(py_file, "w", encoding="utf-8") as f:
+                f.write(fixed_code)
 
-        iteration += 1
+        # 3rd step JUDGE - Tests unitaires
+        print(f"\n Génération et exécution des tests unitaires...")
+        with open(py_file, 'r', encoding='utf-8') as f:
+            code_content = f.read()
+        judge_result = judge.quick_evaluate(code_content, py_file)
 
-    # -------------------------
-    # Completion report
-    # -------------------------
-    if tests_passed:
-        print("\nRefactoring completed successfully")
-        log_experiment("System", "MISSION_COMPLETE", f"Iterations: {iteration}", "INFO")
-    else:
-        print("\n Max iterations reached — stopping safely")
-        log_experiment("System", "MISSION_INCOMPLETE", f"Iterations: {iteration}", "WARNING")
+        # 4th step SELF-HEALING LOOP - Correction basée sur les tests
+        max_iterations = 30
+        iteration = 0
+        print(f"\n Démarrage de la boucle de self-healing (max {max_iterations} itérations)...")
+                
+        while iteration < max_iterations and not judge_result["passed"]:
+         iteration += 1
+         print(f"\n{'─'*60}")
+         print(f"Itération {iteration}/{max_iterations}")
+         print(f"{'─'*60}")
+
+         refactoring_test = judge_result.get("refactoring_test_failure")
+         if not refactoring_test:
+          print("Aucun problème détecté par les tests — sortie de la boucle de self-healing.")
+          break  # Sortir si rien à corriger 
+       
+         print(f"\n {refactoring_test.get('issues_found', 0)} problème(s) détecté(s) par les tests: ")
+         for i, Singleissue in enumerate(refactoring_test.get("refactoring_plan", []), 1):
+          print(f"  {i}. [{Singleissue.get('priority','UNKNOWN')}] {Singleissue.get('issue','No description')}")
+          print(f"     Catégorie: [{Singleissue.get('category','UNKNOWN')}]")
+          print(f"     Message: {Singleissue.get('error_message','')[:150]}")
+          print(f"     Suggestion: {Singleissue.get('suggestion','')}")
+          print(f"     Requiert main protection: {Singleissue.get('requires_main_protection', False)}")
+
+            # Correction
+         fixed_code, _ = fixer.fix_file(Path(py_file), refactoring_test)
+         if fixed_code:
+                with open(py_file, "w", encoding="utf-8") as f:
+                    f.write(fixed_code)
+                print(f"\nCode corrigé pour {py_file}:\n")
+                print(fixed_code)
+
+            # Réévaluation
+         judge_result = judge.quick_evaluate(fixed_code, py_file)
+
+         if judge_result.get("passed", False):
+                print("Tests réussis — Mission terminée avec succès !")
+                break
+         else:
+                print("Tests échoués — Retour au Fixer (Self-Healing Loop) ...")
 
 
 if __name__ == "__main__":
